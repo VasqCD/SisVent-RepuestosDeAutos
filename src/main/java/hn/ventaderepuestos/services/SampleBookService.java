@@ -1,6 +1,6 @@
 package hn.ventaderepuestos.services;
 
-import hn.ventaderepuestos.data.SampleBook;
+import hn.ventaderepuestos.data.Repuesto;
 import hn.ventaderepuestos.data.SampleBookRepository;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -17,11 +17,11 @@ public class SampleBookService {
         this.repository = repository;
     }
 
-    public Optional<SampleBook> get(Long id) {
+    public Optional<Repuesto> get(Long id) {
         return repository.findById(id);
     }
 
-    public SampleBook update(SampleBook entity) {
+    public Repuesto update(Repuesto entity) {
         return repository.save(entity);
     }
 
@@ -29,11 +29,11 @@ public class SampleBookService {
         repository.deleteById(id);
     }
 
-    public Page<SampleBook> list(Pageable pageable) {
+    public Page<Repuesto> list(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
-    public Page<SampleBook> list(Pageable pageable, Specification<SampleBook> filter) {
+    public Page<Repuesto> list(Pageable pageable, Specification<Repuesto> filter) {
         return repository.findAll(filter, pageable);
     }
 

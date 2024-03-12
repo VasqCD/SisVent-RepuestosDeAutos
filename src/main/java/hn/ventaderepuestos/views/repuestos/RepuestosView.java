@@ -28,7 +28,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
-import hn.ventaderepuestos.data.SampleBook;
+import hn.ventaderepuestos.data.Repuesto;
 import hn.ventaderepuestos.services.SampleBookService;
 import hn.ventaderepuestos.views.MainLayout;
 import java.io.ByteArrayInputStream;
@@ -46,22 +46,23 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
     private final String SAMPLEBOOK_ID = "sampleBookID";
     private final String SAMPLEBOOK_EDIT_ROUTE_TEMPLATE = "repuestos/%s/edit";
 
-    private final Grid<SampleBook> grid = new Grid<>(SampleBook.class, false);
+    private final Grid<Repuesto> grid = new Grid<>(Repuesto.class, false);
 
-    private Upload image;
-    private Image imagePreview;
-    private TextField name;
-    private TextField author;
-    private DatePicker publicationDate;
-    private TextField pages;
-    private TextField isbn;
+    private Upload imagen;
+    private Image verImagen;
+    private TextField nombreRepuesto;
+    private TextField precioUnitario;
+    private DatePicker fechaIngreso;
+    private TextField unidadesStock;
+    private TextField estado;
 
-    private final Button cancel = new Button("Cancel");
-    private final Button save = new Button("Save");
+    private final Button cancelar = new Button("Cancelar");
+    private final Button guardar = new Button("Guardar");
+    private final Button eliminar = new Button("Eliminar");
 
-    private final BeanValidationBinder<SampleBook> binder;
+    private final BeanValidationBinder<Repuesto> binder;
 
-    private SampleBook sampleBook;
+    private Repuesto repuesto;
 
     private final SampleBookService sampleBookService;
 
@@ -78,10 +79,10 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
         add(splitLayout);
 
         // Configure Grid
-        LitRenderer<SampleBook> imageRenderer = LitRenderer
-                .<SampleBook>of("<img style='height: 64px' src=${item.image} />").withProperty("image", item -> {
-                    if (item != null && item.getImage() != null) {
-                        return "data:image;base64," + Base64.getEncoder().encodeToString(item.getImage());
+        LitRenderer<Repuesto> imageRenderer = LitRenderer
+                .<Repuesto>of("<img style='height: 64px' src=${item.image} />").withProperty("image", item -> {
+                    if (item != null && item.getImagen() != null) {
+                        return "data:image;base64," + Base64.getEncoder().encodeToString(item.getImagen());
                     } else {
                         return "";
                     }
@@ -109,27 +110,27 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
         });
 
         // Configure Form
-        binder = new BeanValidationBinder<>(SampleBook.class);
+        binder = new BeanValidationBinder<>(Repuesto.class);
 
         // Bind fields. This is where you'd define e.g. validation rules
-        binder.forField(pages).withConverter(new StringToIntegerConverter("Only numbers are allowed")).bind("pages");
+        binder.forField(unidadesStock).withConverter(new StringToIntegerConverter("Only numbers are allowed")).bind("pages");
 
         binder.bindInstanceFields(this);
 
-        attachImageUpload(image, imagePreview);
+        attachImageUpload(imagen, verImagen);
 
-        cancel.addClickListener(e -> {
+        cancelar.addClickListener(e -> {
             clearForm();
             refreshGrid();
         });
 
-        save.addClickListener(e -> {
+        guardar.addClickListener(e -> {
             try {
-                if (this.sampleBook == null) {
-                    this.sampleBook = new SampleBook();
+                if (this.repuesto == null) {
+                    this.repuesto = new Repuesto();
                 }
-                binder.writeBean(this.sampleBook);
-                sampleBookService.update(this.sampleBook);
+                binder.writeBean(this.repuesto);
+                sampleBookService.update(this.repuesto);
                 clearForm();
                 refreshGrid();
                 Notification.show("Data updated");
@@ -149,7 +150,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<Long> sampleBookId = event.getRouteParameters().get(SAMPLEBOOK_ID).map(Long::parseLong);
         if (sampleBookId.isPresent()) {
-            Optional<SampleBook> sampleBookFromBackend = sampleBookService.get(sampleBookId.get());
+            Optional<Repuesto> sampleBookFromBackend = sampleBookService.get(sampleBookId.get());
             if (sampleBookFromBackend.isPresent()) {
                 populateForm(sampleBookFromBackend.get());
             } else {
@@ -173,17 +174,17 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
 
         FormLayout formLayout = new FormLayout();
         NativeLabel imageLabel = new NativeLabel("Image");
-        imagePreview = new Image();
-        imagePreview.setWidth("100%");
-        image = new Upload();
-        image.getStyle().set("box-sizing", "border-box");
-        image.getElement().appendChild(imagePreview.getElement());
-        name = new TextField("Name");
-        author = new TextField("Author");
-        publicationDate = new DatePicker("Publication Date");
-        pages = new TextField("Pages");
-        isbn = new TextField("Isbn");
-        formLayout.add(imageLabel, image, name, author, publicationDate, pages, isbn);
+        verImagen = new Image();
+        verImagen.setWidth("100%");
+        imagen = new Upload();
+        imagen.getStyle().set("box-sizing", "border-box");
+        imagen.getElement().appendChild(verImagen.getElement());
+        nombreRepuesto = new TextField("Nombre de repuesto");
+        precioUnitario = new TextField("Precio unitario");
+        fechaIngreso = new DatePicker("Fecha de ingreso");
+        unidadesStock = new TextField("Unidades en Stock");
+        estado = new TextField("Estado");
+        formLayout.add(imageLabel, imagen, nombreRepuesto, precioUnitario, fechaIngreso, unidadesStock, estado);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -194,9 +195,9 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
     private void createButtonLayout(Div editorLayoutDiv) {
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setClassName("button-layout");
-        cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonLayout.add(save, cancel);
+        cancelar.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        guardar.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        buttonLayout.add(guardar, cancelar);
         editorLayoutDiv.add(buttonLayout);
     }
 
@@ -219,10 +220,10 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
                     () -> new ByteArrayInputStream(uploadBuffer.toByteArray()));
             preview.setSrc(resource);
             preview.setVisible(true);
-            if (this.sampleBook == null) {
-                this.sampleBook = new SampleBook();
+            if (this.repuesto == null) {
+                this.repuesto = new Repuesto();
             }
-            this.sampleBook.setImage(uploadBuffer.toByteArray());
+            this.repuesto.setImagen(uploadBuffer.toByteArray());
         });
         preview.setVisible(false);
     }
@@ -236,15 +237,15 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
         populateForm(null);
     }
 
-    private void populateForm(SampleBook value) {
-        this.sampleBook = value;
-        binder.readBean(this.sampleBook);
-        this.imagePreview.setVisible(value != null);
-        if (value == null || value.getImage() == null) {
-            this.image.clearFileList();
-            this.imagePreview.setSrc("");
+    private void populateForm(Repuesto value) {
+        this.repuesto = value;
+        binder.readBean(this.repuesto);
+        this.verImagen.setVisible(value != null);
+        if (value == null || value.getImagen() == null) {
+            this.imagen.clearFileList();
+            this.verImagen.setSrc("");
         } else {
-            this.imagePreview.setSrc("data:image;base64," + Base64.getEncoder().encodeToString(value.getImage()));
+            this.verImagen.setSrc("data:image;base64," + Base64.getEncoder().encodeToString(value.getImagen()));
         }
 
     }
