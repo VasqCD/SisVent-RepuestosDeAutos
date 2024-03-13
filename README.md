@@ -1,4 +1,4 @@
-# Sistema de Venta de Reppuestos de Autos
+# Sistema de Venta de Repuestos de Autos
 ## Grupo # 2 | PAV2
 
 This project can be used as a starting point to create your own Vaadin application with Spring Boot.
