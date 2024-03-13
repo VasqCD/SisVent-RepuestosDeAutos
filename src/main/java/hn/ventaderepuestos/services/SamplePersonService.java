@@ -1,6 +1,6 @@
 package hn.ventaderepuestos.services;
 
-import hn.ventaderepuestos.data.SamplePerson;
+import hn.ventaderepuestos.data.Proveedor;
 import hn.ventaderepuestos.data.SamplePersonRepository;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -17,11 +17,11 @@ public class SamplePersonService {
         this.repository = repository;
     }
 
-    public Optional<SamplePerson> get(Long id) {
+    public Optional<Proveedor> get(Long id) {
         return repository.findById(id);
     }
 
-    public SamplePerson update(SamplePerson entity) {
+    public Proveedor update(Proveedor entity) {
         return repository.save(entity);
     }
 
@@ -29,11 +29,11 @@ public class SamplePersonService {
         repository.deleteById(id);
     }
 
-    public Page<SamplePerson> list(Pageable pageable) {
+    public Page<Proveedor> list(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
-    public Page<SamplePerson> list(Pageable pageable, Specification<SamplePerson> filter) {
+    public Page<Proveedor> list(Pageable pageable, Specification<Proveedor> filter) {
         return repository.findAll(filter, pageable);
     }
 
