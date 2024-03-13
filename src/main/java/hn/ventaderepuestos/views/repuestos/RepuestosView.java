@@ -89,11 +89,11 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
                 });
         grid.addColumn(imageRenderer).setHeader("Image").setWidth("68px").setFlexGrow(0);
 
-        grid.addColumn("name").setAutoWidth(true);
-        grid.addColumn("author").setAutoWidth(true);
-        grid.addColumn("publicationDate").setAutoWidth(true);
-        grid.addColumn("pages").setAutoWidth(true);
-        grid.addColumn("isbn").setAutoWidth(true);
+        grid.addColumn("nombreRepuesto").setAutoWidth(true);
+        grid.addColumn("precioUnitario").setAutoWidth(true);
+        grid.addColumn("fechaIngreso").setAutoWidth(true);
+        grid.addColumn("unidadesStock").setAutoWidth(true);
+        grid.addColumn("estado").setAutoWidth(true);
         grid.setItems(query -> sampleBookService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
                 .stream());
@@ -113,7 +113,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
         binder = new BeanValidationBinder<>(Repuesto.class);
 
         // Bind fields. This is where you'd define e.g. validation rules
-        binder.forField(unidadesStock).withConverter(new StringToIntegerConverter("Only numbers are allowed")).bind("pages");
+        binder.forField(unidadesStock).withConverter(new StringToIntegerConverter("Only numbers are allowed")).bind("unidadesStock");
 
         binder.bindInstanceFields(this);
 

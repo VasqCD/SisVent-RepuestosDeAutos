@@ -16,6 +16,8 @@ public class Repuesto extends AbstractEntity {
     private LocalDate fechaIngreso;
     private Integer unidadesStock;
     private String estado;
+    
+    
 	public byte[] getImagen() {
 		return imagen;
 	}
