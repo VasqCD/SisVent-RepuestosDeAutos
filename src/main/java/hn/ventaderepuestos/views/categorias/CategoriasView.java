@@ -33,8 +33,8 @@ import org.apache.commons.lang3.StringUtils;
 @Route(value = "categorias", layout = MainLayout.class)
 public class CategoriasView extends Div {
 
-	private static final long serialVersionUID = 1L;
-	private GridPro<CategoriaRepuesto> grid;
+    private static final long serialVersionUID = 1L;
+    private GridPro<CategoriaRepuesto> grid;
     private GridListDataView<CategoriaRepuesto> gridListDataView;
 
     private Grid.Column<CategoriaRepuesto> nombreCategoriaColumn;
@@ -61,8 +61,8 @@ public class CategoriasView extends Div {
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_COLUMN_BORDERS);
         grid.setHeight("100%");
 
-        List<CategoriaRepuesto> clients = getClients();
-        gridListDataView = grid.setItems(clients);
+        List<CategoriaRepuesto> categorias = getCategorias();
+        gridListDataView = grid.setItems(categorias);
     }
 
     private void addColumnsToGrid() {
@@ -79,124 +79,99 @@ public class CategoriasView extends Div {
             Image img = new Image(categoriarepuestos.getImg(), "");
             Span span = new Span();
             span.setClassName("nombre");
-            span.setText(categoriarepuestos.getClient());
+            span.setText(categoriarepuestos.getNombreCategoria());
             hl.add(img, span);
             return hl;
-        })).setComparator(categoriarespuestos -> categoriarespuestos.getClient()).setHeader("Nombre Categoria");
+        })).setComparator(CategoriaRepuesto::getNombreCategoria).setHeader("Nombre Categoria");
     }
 
     private void createDescripcionColumna() {
         descripcionColumn = grid
-                .addEditColumn(CategoriaRepuesto::getAmount,
-                        new NumberRenderer<>(categoriarepuestos -> categoriarepuestos.getAmount(), NumberFormat.getCurrencyInstance(Locale.US)))
-                .text((item, newValue) -> item.setAmount(Double.parseDouble(newValue)))
-                .setComparator(categoriarepuestos -> categoriarepuestos.getAmount()).setHeader("Descripcion");
+                .addColumn(CategoriaRepuesto::getDescripcion)
+                .setComparator(CategoriaRepuesto::getDescripcion)
+                .setHeader("Descripcion");
     }
 
     private void createEstadoColumna() {
-        estadoColumn = grid.addEditColumn(CategoriaRepuesto::getClient, new ComponentRenderer<>(client -> {
-            Span span = new Span();
-            span.setText(client.getStatus());
-            span.getElement().setAttribute("theme", "badge " + client.getStatus().toLowerCase());
-            return span;
-        })).select((item, newValue) -> item.setStatus(newValue), Arrays.asList("Pendiente", "Exito", "Error"))
-                .setComparator(categoriarepuestos -> categoriarepuestos.getStatus()).setHeader("Estado");
+        estadoColumn = grid
+                .addColumn(new ComponentRenderer<>(categoriarepuestos -> {
+                    Span span = new Span();
+                    span.setText(categoriarepuestos.getEstado());
+                    span.getElement().setAttribute("theme", "badge " + categoriarepuestos.getEstado().toLowerCase());
+                    return span;
+                })).setHeader("Estado");
     }
 
-    private void createFechaCreacionColumna() {
+     private void createFechaCreacionColumna() {
         fechaCreacionColumn = grid
-                .addColumn(new LocalDateRenderer<>(categoriarepuestos -> LocalDate.parse(categoriarepuestos.getDate()),
+                .addColumn(new LocalDateRenderer<>(categoriarepuestos -> LocalDate.parse(categoriarepuestos.getFechaCreacion()),
                         () -> DateTimeFormatter.ofPattern("M/d/yyyy")))
-                .setComparator(categoriarepuestos -> categoriarepuestos.getDate()).setHeader("Fecha Creacion").setWidth("180px").setFlexGrow(0);
+                .setComparator(categoriarepuestos -> categoriarepuestos.getFechaCreacion()).setHeader("Fecha Creacion").setWidth("180px").setFlexGrow(0);
     }
+     
 
     private void addFiltersToGrid() {
         HeaderRow filterRow = grid.appendHeaderRow();
 
-        TextField clientFilter = new TextField();
-        clientFilter.setPlaceholder("Filtro");
-        clientFilter.setClearButtonVisible(true);
-        clientFilter.setWidth("100%");
-        clientFilter.setValueChangeMode(ValueChangeMode.EAGER);
-        clientFilter.addValueChangeListener(event -> gridListDataView
-                .addFilter(categoriarepuestos -> StringUtils.containsIgnoreCase(categoriarepuestos.getClient(), clientFilter.getValue())));
-        filterRow.getCell(nombreCategoriaColumn).setComponent(clientFilter);
+        TextField categoriaFilter = new TextField();
+        categoriaFilter.setPlaceholder("Filtro");
+        categoriaFilter.setClearButtonVisible(true);
+        categoriaFilter.setWidth("100%");
+        categoriaFilter.setValueChangeMode(ValueChangeMode.EAGER);
+        categoriaFilter.addValueChangeListener(event -> gridListDataView
+                .addFilter(categoriarepuestos -> StringUtils.containsIgnoreCase(categoriarepuestos.getNombreCategoria(), categoriaFilter.getValue())));
+        filterRow.getCell(nombreCategoriaColumn).setComponent(categoriaFilter);
 
-        TextField amountFilter = new TextField();
-        amountFilter.setPlaceholder("Filtro");
-        amountFilter.setClearButtonVisible(true);
-        amountFilter.setWidth("100%");
-        amountFilter.setValueChangeMode(ValueChangeMode.EAGER);
-        amountFilter.addValueChangeListener(event -> gridListDataView.addFilter(client -> StringUtils
-                .containsIgnoreCase(Double.toString(client.getAmount()), amountFilter.getValue())));
-        filterRow.getCell(descripcionColumn).setComponent(amountFilter);
+        ComboBox<String> estadoFilter = new ComboBox<>();
+        estadoFilter.setItems(Arrays.asList("Pendiente", "Exito", "Error"));
+        estadoFilter.setPlaceholder("Filtro");
+        estadoFilter.setClearButtonVisible(true);
+        estadoFilter.setWidth("100%");
+        estadoFilter.addValueChangeListener(
+                event -> gridListDataView.addFilter(categoriarepuestos -> areStatusesEqual(categoriarepuestos, estadoFilter)));
+        filterRow.getCell(estadoColumn).setComponent(estadoFilter);
 
-        ComboBox<String> statusFilter = new ComboBox<>();
-        statusFilter.setItems(Arrays.asList("Pendiente", "Exito", "Error"));
-        statusFilter.setPlaceholder("Filtro");
-        statusFilter.setClearButtonVisible(true);
-        statusFilter.setWidth("100%");
-        statusFilter.addValueChangeListener(
-                event -> gridListDataView.addFilter(categoriarepuestos -> areStatusesEqual(categoriarepuestos, statusFilter)));
-        filterRow.getCell(estadoColumn).setComponent(statusFilter);
-
-        DatePicker dateFilter = new DatePicker();
-        dateFilter.setPlaceholder("Filtro");
-        dateFilter.setClearButtonVisible(true);
-        dateFilter.setWidth("100%");
-        dateFilter.addValueChangeListener(
-                event -> gridListDataView.addFilter(categoriarepuestos -> areDatesEqual(categoriarepuestos, dateFilter)));
-        filterRow.getCell(fechaCreacionColumn).setComponent(dateFilter);
+        DatePicker fechaFilter = new DatePicker();
+        fechaFilter.setPlaceholder("Filtro");
+        fechaFilter.setClearButtonVisible(true);
+        fechaFilter.setWidth("100%");
+        fechaFilter.addValueChangeListener(
+                event -> gridListDataView.addFilter(categoriarepuestos -> areDatesEqual(categoriarepuestos, fechaFilter)));
+        filterRow.getCell(fechaCreacionColumn).setComponent(fechaFilter);
     }
 
-    private boolean areStatusesEqual(CategoriaRepuesto client, ComboBox<String> statusFilter) {
-        String statusFilterValue = statusFilter.getValue();
-        if (statusFilterValue != null) {
-            return StringUtils.equals(client.getStatus(), statusFilterValue);
+    private boolean areStatusesEqual(CategoriaRepuesto categoria, ComboBox<String> estadoFilter) {
+        String estadoFilterValue = estadoFilter.getValue();
+        if (estadoFilterValue != null) {
+            return StringUtils.equals(categoria.getEstado(), estadoFilterValue);
         }
         return true;
     }
 
-    private boolean areDatesEqual(CategoriaRepuesto client, DatePicker dateFilter) {
-        LocalDate dateFilterValue = dateFilter.getValue();
-        if (dateFilterValue != null) {
-            LocalDate repuestoDato = LocalDate.parse(client.getDate());
-            return dateFilterValue.equals(repuestoDato);
+    private boolean areDatesEqual(CategoriaRepuesto categoria, DatePicker fechaFilter) {
+        LocalDate fechaFilterValue = fechaFilter.getValue();
+        if (fechaFilterValue != null) {
+            LocalDate fechaCategoria = LocalDate.parse(categoria.getFechaCreacion());
+            return fechaFilterValue.equals(fechaCategoria);
         }
         return true;
     }
 
-    private List<CategoriaRepuesto> getClients() {
+    private List<CategoriaRepuesto> getCategorias() {
         return Arrays.asList(
-                createCategoriaRepuestos(4957, "https://randomuser.me/api/portraits/women/42.jpg", "Amarachi Nkechi", 47427.0,
-                        "Success", "2019-05-09"),
-                createCategoriaRepuestos(675, "https://randomuser.me/api/portraits/women/24.jpg", "Bonelwa Ngqawana", 70503.0,
-                        "Success", "2019-05-09"),
-                createCategoriaRepuestos(6816, "https://randomuser.me/api/portraits/men/42.jpg", "Debashis Bhuiyan", 58931.0,
-                        "Success", "2019-05-07"),
-                createCategoriaRepuestos(5144, "https://randomuser.me/api/portraits/women/76.jpg", "Jacqueline Asong", 25053.0,
-                        "Pending", "2019-04-25"),
-                createCategoriaRepuestos(9800, "https://randomuser.me/api/portraits/men/24.jpg", "Kobus van de Vegte", 7319.0,
-                        "Pending", "2019-04-22"),
-                createCategoriaRepuestos(3599, "https://randomuser.me/api/portraits/women/94.jpg", "Mattie Blooman", 18441.0,
-                        "Error", "2019-04-17"),
-                createCategoriaRepuestos(3989, "https://randomuser.me/api/portraits/men/76.jpg", "Oea Romana", 33376.0, "Pending",
-                        "2019-04-17"),
-                createCategoriaRepuestos(1077, "https://randomuser.me/api/portraits/men/94.jpg", "Stephanus Huggins", 75774.0,
-                        "Success", "2019-02-26"),
-                createCategoriaRepuestos(8942, "https://randomuser.me/api/portraits/men/16.jpg", "Torsten Paulsson", 82531.0,
-                        "Pending", "2019-02-21"));
+                createCategoriaRepuesto(8942, "https://www.pruebaderuta.com/wp-content/uploads/2017/02/repuestos.jpg", "Sistema de suspencion", "Descripción de la categoría", "Exito", "2024-03-14")
+        );
     }
 
-    private CategoriaRepuesto createCategoriaRepuestos(int id, String img, String nombreCategoria, double descripcion, String estado, String fechaCreacion) {
+    private CategoriaRepuesto createCategoriaRepuesto(int id, String img, String nombreCategoria, String descripcion, String estado, String fechaCreacion) {
         CategoriaRepuesto c = new CategoriaRepuesto();
         c.setId(id);
         c.setImg(img);
-        c.setClient(nombreCategoria);
-        c.setAmount(descripcion);
-        c.setStatus(estado);
-        c.setDate(fechaCreacion);
-
+        c.setNombreCategoria(nombreCategoria);
+        c.setDescripcion(descripcion);
+        c.setEstado(estado);
+        c.setFechaCreacion(fechaCreacion);
         return c;
     }
-};
+}
+
