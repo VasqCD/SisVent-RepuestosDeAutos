@@ -166,14 +166,14 @@ public class ProveedorView extends Div implements BeforeEnterObserver {
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
-        nombreProveedor = new TextField("First Name");
-        direccion = new TextField("Last Name");
-        correo = new TextField("Email");
-        telefono = new TextField("Phone");
-        fechaContratacion = new DatePicker("Date Of Birth");
-        pais = new TextField("Occupation");
-        estado = new TextField("Role");
-        importante = new Checkbox("Important");
+        nombreProveedor = new TextField("Nombre Proveedor");
+        direccion = new TextField("Direccion");
+        correo = new TextField("Correo Electronico");
+        telefono = new TextField("Telefono");
+        fechaContratacion = new DatePicker("Fecha Contratacion");
+        pais = new TextField("Pais");
+        estado = new TextField("Estado");
+        importante = new Checkbox("Importante");
         formLayout.add(nombreProveedor, direccion, correo, telefono, fechaContratacion, pais, estado, importante);
 
         editorDiv.add(formLayout);
