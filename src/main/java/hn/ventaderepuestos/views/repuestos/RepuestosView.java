@@ -180,10 +180,15 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
         imagen.getStyle().set("box-sizing", "border-box");
         imagen.getElement().appendChild(verImagen.getElement());
         nombreRepuesto = new TextField("Nombre de repuesto");
+        nombreRepuesto.setId("txt_nombreRepuesto");
         precioUnitario = new TextField("Precio unitario");
+        precioUnitario.setId("txt_precioUnitario");
         fechaIngreso = new DatePicker("Fecha de ingreso");
+        fechaIngreso.setId("txt_fechaIngreso");
         unidadesStock = new TextField("Unidades en Stock");
+        unidadesStock.setId("txt_unidades");
         estado = new TextField("Estado");
+        estado.setId("txt_estado");
         formLayout.add(imageLabel, imagen, nombreRepuesto, precioUnitario, fechaIngreso, unidadesStock, estado);
 
         editorDiv.add(formLayout);
@@ -196,8 +201,12 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setClassName("button-layout");
         cancelar.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        cancelar.setId("btn_cancelar");
         guardar.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonLayout.add(guardar, cancelar);
+        guardar.setId("btn_guardar");
+        guardar.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        eliminar.setId("btn_eliminar");
+        buttonLayout.add(guardar, cancelar, eliminar);
         editorLayoutDiv.add(buttonLayout);
     }
 
