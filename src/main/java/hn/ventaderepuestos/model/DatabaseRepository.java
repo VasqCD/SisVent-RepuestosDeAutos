@@ -14,5 +14,5 @@ public interface DatabaseRepository {
 	@GET("/pls/apex/cvasq/svra/Proveedor")
 	Call<ProveedoresResponse> consultarProveedor();
 
-	//https://apex.oracle.com
+	//https://apex.oracle.com/pls/apex/cvasq/svra/Proveedor
 }

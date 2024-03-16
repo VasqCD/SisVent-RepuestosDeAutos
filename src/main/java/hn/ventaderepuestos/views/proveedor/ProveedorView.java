@@ -3,7 +3,6 @@ package hn.ventaderepuestos.views.proveedor;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -18,41 +17,36 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.BeanValidationBinder;
-import com.vaadin.flow.data.binder.ValidationException;
-import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 
+import hn.ventaderepuestos.controller.InteractorImplProveedor;
 import hn.ventaderepuestos.controller.InteractorProveedor;
 import hn.ventaderepuestos.data.Proveedor;
-import hn.ventaderepuestos.services.SamplePersonService;
 import hn.ventaderepuestos.views.MainLayout;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @PageTitle("Proveedor")
-@Route(value = "proveedor/:nombreEmpleado?/:action?(edit)", layout = MainLayout.class)
+@Route(value = "proveedor/:nombreProveedor?/:action?(edit)", layout = MainLayout.class)
 @Uses(Icon.class)
 public class ProveedorView extends Div implements BeforeEnterObserver, ViewModelProveedor {
 
-    private final String SAMPLEPERSON_ID = "nombreProveedor";
+    private final String SAMPLEPERSON_ID = "nombreproveedor";
     private final String SAMPLEPERSON_EDIT_ROUTE_TEMPLATE = "proveedor/%s/edit";
 
     private final Grid<Proveedor> grid = new Grid<>(Proveedor.class, false);
 
-    private TextField nombreProveedor;
+    private TextField nombre;
     private TextField direccion;
     private TextField correo;
     private TextField telefono;
-    private DatePicker fechaContratacion;
     private TextField pais;
     private TextField estado;
 
@@ -65,10 +59,13 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
     private List<Proveedor> elementos;
     private InteractorProveedor controlador;
     
- 
+    
     public ProveedorView() {
         
         addClassNames("proveedor-view");
+        
+        controlador = new InteractorImplProveedor(this);
+        elementos = new ArrayList<>();
 
         // Create UI
         SplitLayout splitLayout = new SplitLayout();
@@ -79,11 +76,10 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
         add(splitLayout);
 
         // Configure Grid
-        grid.addColumn("nombreProveedor").setAutoWidth(true);
+        grid.addColumn("nombre").setAutoWidth(true);
         grid.addColumn("direccion").setAutoWidth(true);
         grid.addColumn("correo").setAutoWidth(true);
         grid.addColumn("telefono").setAutoWidth(true);
-        grid.addColumn("fechaContratacion").setAutoWidth(true);
         grid.addColumn("pais").setAutoWidth(true);
         grid.addColumn("estado").setAutoWidth(true);
         
@@ -98,6 +94,8 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
                 UI.getCurrent().navigate(ProveedorView.class);
             }
         });
+        
+        controlador.consultarProveedor();
         
 
         // Configure Form
@@ -158,7 +156,7 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
     private Proveedor obtenerProveedor(String nombre) {
 		Proveedor encontrado = null;
     	for(Proveedor prov: elementos) {
-			if(prov.getNombreProveedor().equals(nombre)) {
+			if(prov.getNombre().equals(nombre)) {
 				encontrado = prov;
 				break;
 			}
@@ -175,16 +173,15 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
-        nombreProveedor = new TextField("Nombre Proveedor");
+        nombre = new TextField("Nombre Proveedor");
         direccion = new TextField("Direccion");
         correo = new TextField("Correo Electronico");
         telefono = new TextField("Telefono");
-        fechaContratacion = new DatePicker("Fecha Contratacion");
         pais = new TextField("Pais");
         estado = new TextField("Estado");
 
         
-        formLayout.add(nombreProveedor, direccion, correo, telefono, fechaContratacion, pais, estado);
+        formLayout.add(nombre, direccion, correo, telefono, pais, estado);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -227,20 +224,18 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
     	this.proveedorSeleccionado = value;
         if(value != null) {
         	
-        	nombreProveedor.setValue(value.getNombreProveedor());
+        	nombre.setValue(value.getNombre());
         	direccion.setValue(value.getDireccion());
         	correo.setValue(value.getCorreo());
         	telefono.setValue(value.getCorreo());
-        	fechaContratacion.setValue(value.getFechaContratacion());
         	pais.setValue(value.getPais());
         	estado.setValue(value.getEstado());
         	
         }else {
-        	nombreProveedor.setValue("");
+        	nombre.setValue("");
         	direccion.setValue("");
         	correo.setValue("");
         	telefono.setValue("");
-        	fechaContratacion.setValue(null);
         	pais.setValue("");
         	estado.setValue("");
         }  

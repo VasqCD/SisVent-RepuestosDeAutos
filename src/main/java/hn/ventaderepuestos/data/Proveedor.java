@@ -7,20 +7,19 @@ import java.time.LocalDate;
 @Entity
 public class Proveedor extends AbstractEntity {
 
-    private String nombreProveedor;
+    private String nombre;
     private String direccion;
     @Email
     private String correo;
     private String telefono;
-    private LocalDate fechaContratacion;
     private String pais;
     private String estado;
-    private boolean importante;
-	public String getNombreProveedor() {
-		return nombreProveedor;
+    
+	public String getNombre() {
+		return nombre;
 	}
-	public void setNombreProveedor(String nombreProveedor) {
-		this.nombreProveedor = nombreProveedor;
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
 	}
 	public String getDireccion() {
 		return direccion;
@@ -40,12 +39,7 @@ public class Proveedor extends AbstractEntity {
 	public void setTelefono(String telefono) {
 		this.telefono = telefono;
 	}
-	public LocalDate getFechaContratacion() {
-		return fechaContratacion;
-	}
-	public void setFechaContratacion(LocalDate fechaContratacion) {
-		this.fechaContratacion = fechaContratacion;
-	}
+	
 	public String getPais() {
 		return pais;
 	}
@@ -58,15 +52,6 @@ public class Proveedor extends AbstractEntity {
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
-	public boolean isImportante() {
-		return importante;
-	}
-	public void setImportante(boolean importante) {
-		this.importante = importante;
-	}
+
     
-    
-
-
-
 }
