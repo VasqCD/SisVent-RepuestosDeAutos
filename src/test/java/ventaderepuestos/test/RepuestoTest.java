@@ -33,18 +33,18 @@ public class RepuestoTest {
 			
 			// Localiza el campo de entrada de repuesto
 			WebElement campoNombreRepuesto = driver.findElement(By.xpath("//vaadin-text-field[@id='txt_nombreRepuesto']/input"));
+			WebElement campoMarca = driver.findElement(By.xpath("//vaadin-text-field[@id='txt_marcaRepuesto']/input"));
 			WebElement campoPrecio = driver.findElement(By.xpath("//vaadin-text-field[@id='txt_precioUnitario']/input"));
-			WebElement campoFecha = driver.findElement(By.xpath("//vaadin-date-picker[@id='txt_fechaIngreso']/input"));
-			WebElement campoUnidades = driver.findElement(By.xpath("//vaadin-text-field[@id='txt_unidades']/input"));
+			WebElement campoStock = driver.findElement(By.xpath("//vaadin-text-field[@id='txt_unidades']/input"));
 			WebElement campoEstado = driver.findElement(By.xpath("//vaadin-text-field[@id='txt_estado']/input"));
 			
 			WebElement btnGuardar = driver.findElement(By.xpath("//vaadin-button[@id='btn_guardar']"));
 			
 			// Ingresa un repuesto
 			campoNombreRepuesto.sendKeys("Pastillas de freno");
-			campoPrecio.sendKeys("1498");
-			campoFecha.sendKeys("15/3/2024");
-			campoUnidades.sendKeys("8");
+			campoMarca.sendKeys("Keinsei");
+			campoPrecio.sendKeys("2000");
+			campoStock.sendKeys("8");
 			campoEstado.sendKeys("Activo");
 			
 
