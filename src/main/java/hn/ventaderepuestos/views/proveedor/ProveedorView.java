@@ -34,11 +34,11 @@ import java.util.Optional;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @PageTitle("Proveedor")
-@Route(value = "proveedor/:nombreProveedor?/:action?(edit)", layout = MainLayout.class)
+@Route(value = "proveedor/:nombre?/:action?(edit)", layout = MainLayout.class)
 @Uses(Icon.class)
 public class ProveedorView extends Div implements BeforeEnterObserver, ViewModelProveedor {
 
-    private final String SAMPLEPERSON_ID = "nombreproveedor";
+    private final String SAMPLEPERSON_ID = "nombre";
     private final String SAMPLEPERSON_EDIT_ROUTE_TEMPLATE = "proveedor/%s/edit";
 
     private final Grid<Proveedor> grid = new Grid<>(Proveedor.class, false);
@@ -135,14 +135,14 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        Optional<String> proveedorNombr = event.getRouteParameters().get(SAMPLEPERSON_ID);
-        if (proveedorNombr.isPresent()) {
-        	Proveedor proveedorObtenido = obtenerProveedor(proveedorNombr.get());
+        Optional<String> nombre = event.getRouteParameters().get(SAMPLEPERSON_ID);
+        if (nombre.isPresent()) {
+        	Proveedor proveedorObtenido = obtenerProveedor(nombre.get());
             if (proveedorObtenido != null) {
                 populateForm(proveedorObtenido);
             } else {
                 Notification.show(
-                        String.format("El proveedor con nombre = %s no existe", proveedorNombr.get()), 3000,
+                        String.format("El proveedor con nombre = %s no existe", nombre.get()), 3000,
                         Notification.Position.BOTTOM_START);
                 // when a row is selected but the data is no longer available,
                 // refresh grid
@@ -174,11 +174,17 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
 
         FormLayout formLayout = new FormLayout();
         nombre = new TextField("Nombre Proveedor");
+        nombre.setId("txt_nomProveedor");
         direccion = new TextField("Direccion");
+        direccion.setId("txt_Direccion");
         correo = new TextField("Correo Electronico");
+        correo.setId("txt_correo");
         telefono = new TextField("Telefono");
+        telefono.setId("txt_telefono");
         pais = new TextField("Pais");
+        pais.setId("txt_pais");
         estado = new TextField("Estado");
+        estado.setId("txt_estado");
 
         
         formLayout.add(nombre, direccion, correo, telefono, pais, estado);
