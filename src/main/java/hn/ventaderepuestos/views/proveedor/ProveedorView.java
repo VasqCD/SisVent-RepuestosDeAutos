@@ -88,7 +88,7 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
         // when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> {
             if (event.getValue() != null) {
-                UI.getCurrent().navigate(String.format(SAMPLEPERSON_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
+                UI.getCurrent().navigate(String.format(SAMPLEPERSON_EDIT_ROUTE_TEMPLATE, event.getValue().getNombre()));
             } else {
                 clearForm();
                 UI.getCurrent().navigate(ProveedorView.class);

@@ -24,7 +24,7 @@ public class InteractorImplProveedor implements InteractorProveedor {
 		try {
 			ProveedoresResponse respuesta = this.modelo.consultarProveedor();
 			if(respuesta == null || respuesta.getCount() == 0 || respuesta.getItems() == null) {
-				this.vista.mostrarMensajeError("No hay empleados a mostrar");
+				this.vista.mostrarMensajeError("No hay proveedor a mostrar");
 			}else {
 				this.vista.mostrarProveedorEnGrid(respuesta.getItems());
 			}

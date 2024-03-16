@@ -10,37 +10,35 @@ public class Repuesto extends AbstractEntity {
 
     @Lob
     @Column(length = 1000000)
-    private String nombreRepuesto;
-    private String precioUnitario;
-    private LocalDate fechaIngreso;
-    private Integer unidadesStock;
+    private String nombre;
+    private String marca;
+    private String precio;
+    private int stock;
     private String estado;
-    
-    
+	public String getNombre() {
+		return nombre;
+	}
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	public String getMarca() {
+		return marca;
+	}
+	public void setMarca(String marca) {
+		this.marca = marca;
+	}
+	public String getPrecio() {
+		return precio;
+	}
+	public void setPrecio(String precio) {
+		this.precio = precio;
+	}
 	
-	public String getNombreRepuesto() {
-		return nombreRepuesto;
+	public int getStock() {
+		return stock;
 	}
-	public void setNombreRepuesto(String nombreRepuesto) {
-		this.nombreRepuesto = nombreRepuesto;
-	}
-	public String getPrecioUnitario() {
-		return precioUnitario;
-	}
-	public void setPrecioUnitario(String precioUnitario) {
-		this.precioUnitario = precioUnitario;
-	}
-	public LocalDate getFechaIngreso() {
-		return fechaIngreso;
-	}
-	public void setFechaIngreso(LocalDate fechaIngreso) {
-		this.fechaIngreso = fechaIngreso;
-	}
-	public Integer getUnidadesStock() {
-		return unidadesStock;
-	}
-	public void setUnidadesStock(Integer unidadesStock) {
-		this.unidadesStock = unidadesStock;
+	public void setStock(int stock) {
+		this.stock = stock;
 	}
 	public String getEstado() {
 		return estado;
@@ -48,6 +46,6 @@ public class Repuesto extends AbstractEntity {
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
-
+    
     
 }

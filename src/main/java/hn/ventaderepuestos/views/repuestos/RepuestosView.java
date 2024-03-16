@@ -29,47 +29,55 @@ import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 
-import hn.ventaderepuestos.data.Proveedor;
+import hn.ventaderepuestos.controller.InteractorImplRepuesto;
+import hn.ventaderepuestos.controller.InteractorRepuesto;
 import hn.ventaderepuestos.data.Repuesto;
 import hn.ventaderepuestos.services.SampleBookService;
 import hn.ventaderepuestos.views.MainLayout;
+import hn.ventaderepuestos.views.proveedor.ProveedorView;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @PageTitle("Repuestos")
-@Route(value = "repuestos/:sampleBookID?/:action?(edit)", layout = MainLayout.class)
+@Route(value = "repuestos/:nombre?/:action?(edit)", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
-public class RepuestosView extends Div implements BeforeEnterObserver {
+public class RepuestosView extends Div implements BeforeEnterObserver, ViewModelRepuesto {
 
-    private final String SAMPLEBOOK_ID = "sampleBookID";
+    private final String SAMPLEBOOK_ID = "nombre";
     private final String SAMPLEBOOK_EDIT_ROUTE_TEMPLATE = "repuestos/%s/edit";
 
     private final Grid<Repuesto> grid = new Grid<>(Repuesto.class, false);
 
 
-    private TextField nombreRepuesto;
-    private TextField precioUnitario;
-    private DatePicker fechaIngreso;
-    private TextField unidadesStock;
+    private TextField nombre;
+    private TextField marca;
+    private TextField precio;
+    private TextField stock;
     private TextField estado;
 
     private final Button cancelar = new Button("Cancelar");
     private final Button guardar = new Button("Guardar");
     private final Button eliminar = new Button("Eliminar");
 
-    private final BeanValidationBinder<Repuesto> binder;
+    private Repuesto repuestoSeleccionado;
+    private List<Repuesto> elementos;
+    private InteractorRepuesto controlador;
 
-    private Repuesto repuesto;
 
-    private final SampleBookService sampleBookService;
-
-    public RepuestosView(SampleBookService sampleBookService) {
-        this.sampleBookService = sampleBookService;
+    public RepuestosView() {
+       
         addClassNames("repuestos-view");
+        
+        controlador = new InteractorImplRepuesto(this);
+        elementos = new ArrayList<>();
 
         // Create UI
         SplitLayout splitLayout = new SplitLayout();
@@ -81,35 +89,31 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
 
         // Configure Grid
 
-        grid.addColumn("nombreRepuesto").setAutoWidth(true);
-        grid.addColumn("precioUnitario").setAutoWidth(true);
-        grid.addColumn("fechaIngreso").setAutoWidth(true);
-        grid.addColumn("unidadesStock").setAutoWidth(true);
+        grid.addColumn("nombre").setAutoWidth(true);
+        grid.addColumn("marca").setAutoWidth(true);
+        grid.addColumn("precio").setAutoWidth(true);
+        grid.addColumn("stock").setAutoWidth(true);
         grid.addColumn("estado").setAutoWidth(true);
-        grid.setItems(query -> sampleBookService.list(
-                PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
-                .stream());
+        
+
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
         // when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> {
             if (event.getValue() != null) {
-                UI.getCurrent().navigate(String.format(SAMPLEBOOK_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
+                UI.getCurrent().navigate(String.format(SAMPLEBOOK_EDIT_ROUTE_TEMPLATE, event.getValue().getNombre()));
             } else {
                 clearForm();
                 UI.getCurrent().navigate(RepuestosView.class);
             }
         });
+        
+        controlador.consultarRepuesto();
 
+        
         // Configure Form
-        binder = new BeanValidationBinder<>(Repuesto.class);
-
-        // Bind fields. This is where you'd define e.g. validation rules
-        binder.forField(unidadesStock).withConverter(new StringToIntegerConverter("Only numbers are allowed")).bind("unidadesStock");
-
-        binder.bindInstanceFields(this);
-
-     
+        
+    
 
         cancelar.addClickListener(e -> {
             clearForm();
@@ -118,35 +122,38 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
 
         guardar.addClickListener(e -> {
             try {
-                if (this.repuesto == null) {
-                    this.repuesto = new Repuesto();
+                if (this.repuestoSeleccionado == null) {
+                    this.repuestoSeleccionado = new Repuesto();
                 }
-                binder.writeBean(this.repuesto);
-                sampleBookService.update(this.repuesto);
+            
                 clearForm();
                 refreshGrid();
-                Notification.show("Data updated");
-                UI.getCurrent().navigate(RepuestosView.class);
+                Notification.show("Datos actualizados");
+                UI.getCurrent().navigate(ProveedorView.class);
             } catch (ObjectOptimisticLockingFailureException exception) {
                 Notification n = Notification.show(
                         "Error updating the data. Somebody else has updated the record while you were making changes.");
                 n.setPosition(Position.MIDDLE);
                 n.addThemeVariants(NotificationVariant.LUMO_ERROR);
-            } catch (ValidationException validationException) {
-                Notification.show("Failed to update the data. Check again that all values are valid");
             }
         });
+        
+        eliminar.addClickListener( e-> {
+          	 Notification n = Notification.show("Botón eliminar seleccionado, aún no hay nada que eliminar");
+          	 n.setPosition(Position.MIDDLE);
+               n.addThemeVariants(NotificationVariant.LUMO_WARNING);
+          });
     }
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        Optional<Long> sampleBookId = event.getRouteParameters().get(SAMPLEBOOK_ID).map(Long::parseLong);
-        if (sampleBookId.isPresent()) {
-            Optional<Repuesto> sampleBookFromBackend = sampleBookService.get(sampleBookId.get());
-            if (sampleBookFromBackend.isPresent()) {
-                populateForm(sampleBookFromBackend.get());
+        Optional<String> nombre = event.getRouteParameters().get(SAMPLEBOOK_ID);
+        if (nombre.isPresent()) {
+        	Repuesto repuestoObtenido = obtenerRepuesto(nombre.get());
+            if (repuestoObtenido != null) {
+                populateForm(repuestoObtenido);
             } else {
-                Notification.show(String.format("The requested sampleBook was not found, ID = %s", sampleBookId.get()),
+                Notification.show(String.format("El repuesto de nombre = %s no existe", nombre.get()),
                         3000, Notification.Position.BOTTOM_START);
                 // when a row is selected but the data is no longer available,
                 // refresh grid
@@ -154,6 +161,17 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
                 event.forwardTo(RepuestosView.class);
             }
         }
+    }
+    
+    private Repuesto obtenerRepuesto(String nombre) {
+    	Repuesto encontrado = null;
+    	for(Repuesto rep: elementos) {
+    		if(rep.getNombre().equals(nombre)) {
+    			encontrado = rep;
+    			break;
+    		}
+    	}
+    	return encontrado;
     }
 
     private void createEditorLayout(SplitLayout splitLayout) {
@@ -165,17 +183,18 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
-        nombreRepuesto = new TextField("Nombre de repuesto");
-        nombreRepuesto.setId("txt_nombreRepuesto");
-        precioUnitario = new TextField("Precio unitario");
-        precioUnitario.setId("txt_precioUnitario");
-        fechaIngreso = new DatePicker("Fecha de ingreso");
-        fechaIngreso.setId("txt_fechaIngreso");
-        unidadesStock = new TextField("Unidades en Stock");
-        unidadesStock.setId("txt_unidades");
+        nombre = new TextField("Nombre de repuesto");
+        nombre.setId("txt_nombreRepuesto");
+        marca = new TextField("Marca de repuesto");
+        marca.setId("txt_marcaRepuesto");
+        precio = new TextField("Precio unitario");
+        precio.setId("txt_precioUnitario");
+        stock = new TextField("Unidades en Stock");
+        stock.setId("txt_unidades");
         estado = new TextField("Estado");
         estado.setId("txt_estado");
-        formLayout.add(nombreRepuesto, precioUnitario, fechaIngreso, unidadesStock, estado);
+        
+        formLayout.add(nombre, marca, precio, stock, estado);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -192,6 +211,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
         guardar.setId("btn_guardar");
         guardar.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         eliminar.setId("btn_eliminar");
+        
         buttonLayout.add(guardar, cancelar, eliminar);
         editorLayoutDiv.add(buttonLayout);
     }
@@ -215,9 +235,34 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
     }
 
     private void populateForm(Repuesto value) {
-        this.repuesto = value;
-        binder.readBean(this.repuesto);
+       this.repuestoSeleccionado = value;
+       if(value != null) {
+    	   nombre.setValue(value.getNombre());
+    	   marca.setValue(value.getMarca());
+    	   precio.setValue(value.getPrecio());
+    	   stock.setValue(String.valueOf(value.getStock()));
+    	   estado.setValue(value.getEstado());
+    	   
+       }else {
+    	   nombre.setValue("");
+    	   marca.setValue("");
+    	   precio.setValue("");
+    	   stock.setValue("");
+    	   estado.setValue("");
+       }
 
+    }
+    
+    @Override
+    public void mostrarRepuestoEnGrid(List<Repuesto> items) {
+    	Collection<Repuesto> itemsCollection = items;
+    	grid.setItems(itemsCollection);
+    	this.elementos = items;
+    }
+    
+    @Override
+    public void mostrarMensajeError(String mensaje) {
+    	Notification.show(mensaje);
     }
     
 }
