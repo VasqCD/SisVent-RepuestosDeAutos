@@ -28,6 +28,8 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
+
+import hn.ventaderepuestos.data.Proveedor;
 import hn.ventaderepuestos.data.Repuesto;
 import hn.ventaderepuestos.services.SampleBookService;
 import hn.ventaderepuestos.views.MainLayout;
@@ -48,8 +50,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
 
     private final Grid<Repuesto> grid = new Grid<>(Repuesto.class, false);
 
-    private Upload imagen;
-    private Image verImagen;
+
     private TextField nombreRepuesto;
     private TextField precioUnitario;
     private DatePicker fechaIngreso;
@@ -79,15 +80,6 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
         add(splitLayout);
 
         // Configure Grid
-        LitRenderer<Repuesto> imageRenderer = LitRenderer
-                .<Repuesto>of("<img style='height: 64px' src=${item.image} />").withProperty("image", item -> {
-                    if (item != null && item.getImagen() != null) {
-                        return "data:image;base64," + Base64.getEncoder().encodeToString(item.getImagen());
-                    } else {
-                        return "";
-                    }
-                });
-        grid.addColumn(imageRenderer).setHeader("Image").setWidth("68px").setFlexGrow(0);
 
         grid.addColumn("nombreRepuesto").setAutoWidth(true);
         grid.addColumn("precioUnitario").setAutoWidth(true);
@@ -117,7 +109,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
 
         binder.bindInstanceFields(this);
 
-        attachImageUpload(imagen, verImagen);
+     
 
         cancelar.addClickListener(e -> {
             clearForm();
@@ -173,12 +165,6 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
-        NativeLabel imageLabel = new NativeLabel("Image");
-        verImagen = new Image();
-        verImagen.setWidth("100%");
-        imagen = new Upload();
-        imagen.getStyle().set("box-sizing", "border-box");
-        imagen.getElement().appendChild(verImagen.getElement());
         nombreRepuesto = new TextField("Nombre de repuesto");
         nombreRepuesto.setId("txt_nombreRepuesto");
         precioUnitario = new TextField("Precio unitario");
@@ -189,7 +175,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
         unidadesStock.setId("txt_unidades");
         estado = new TextField("Estado");
         estado.setId("txt_estado");
-        formLayout.add(imageLabel, imagen, nombreRepuesto, precioUnitario, fechaIngreso, unidadesStock, estado);
+        formLayout.add(nombreRepuesto, precioUnitario, fechaIngreso, unidadesStock, estado);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -217,25 +203,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
         wrapper.add(grid);
     }
 
-    private void attachImageUpload(Upload upload, Image preview) {
-        ByteArrayOutputStream uploadBuffer = new ByteArrayOutputStream();
-        upload.setAcceptedFileTypes("image/*");
-        upload.setReceiver((fileName, mimeType) -> {
-            uploadBuffer.reset();
-            return uploadBuffer;
-        });
-        upload.addSucceededListener(e -> {
-            StreamResource resource = new StreamResource(e.getFileName(),
-                    () -> new ByteArrayInputStream(uploadBuffer.toByteArray()));
-            preview.setSrc(resource);
-            preview.setVisible(true);
-            if (this.repuesto == null) {
-                this.repuesto = new Repuesto();
-            }
-            this.repuesto.setImagen(uploadBuffer.toByteArray());
-        });
-        preview.setVisible(false);
-    }
+    
 
     private void refreshGrid() {
         grid.select(null);
@@ -249,13 +217,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver {
     private void populateForm(Repuesto value) {
         this.repuesto = value;
         binder.readBean(this.repuesto);
-        this.verImagen.setVisible(value != null);
-        if (value == null || value.getImagen() == null) {
-            this.imagen.clearFileList();
-            this.verImagen.setSrc("");
-        } else {
-            this.verImagen.setSrc("data:image;base64," + Base64.getEncoder().encodeToString(value.getImagen()));
-        }
 
     }
+    
 }

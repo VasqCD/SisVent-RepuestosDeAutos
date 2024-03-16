@@ -56,7 +56,7 @@ public class ProveedorView extends Div implements BeforeEnterObserver {
 
     private final BeanValidationBinder<Proveedor> binder;
 
-    private Proveedor samplePerson;
+    private Proveedor proveedor;
 
     private final SamplePersonService samplePersonService;
 
@@ -118,11 +118,11 @@ public class ProveedorView extends Div implements BeforeEnterObserver {
 
         save.addClickListener(e -> {
             try {
-                if (this.samplePerson == null) {
-                    this.samplePerson = new Proveedor();
+                if (this.proveedor == null) {
+                    this.proveedor = new Proveedor();
                 }
-                binder.writeBean(this.samplePerson);
-                samplePersonService.update(this.samplePerson);
+                binder.writeBean(this.proveedor);
+                samplePersonService.update(this.proveedor);
                 clearForm();
                 refreshGrid();
                 Notification.show("Data updated");
@@ -208,8 +208,8 @@ public class ProveedorView extends Div implements BeforeEnterObserver {
     }
 
     private void populateForm(Proveedor value) {
-        this.samplePerson = value;
-        binder.readBean(this.samplePerson);
+        this.proveedor = value;
+        binder.readBean(this.proveedor);
 
     }
 }

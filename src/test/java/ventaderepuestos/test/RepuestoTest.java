@@ -47,10 +47,12 @@ public class RepuestoTest {
 			campoUnidades.sendKeys("8");
 			campoEstado.sendKeys("Activo");
 			
+			//btnGuardar.click();
+			
 			//Espera 3 segundos para dar click en el boton guardar
 			Thread.sleep(3000);
 			
-			btnGuardar.click();
+			//btnGuardar.click();
 		
 		}finally {
 			driver.close();

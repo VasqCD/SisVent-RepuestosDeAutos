@@ -10,7 +10,6 @@ public class Repuesto extends AbstractEntity {
 
     @Lob
     @Column(length = 1000000)
-    private byte[] imagen;
     private String nombreRepuesto;
     private String precioUnitario;
     private LocalDate fechaIngreso;
@@ -18,12 +17,7 @@ public class Repuesto extends AbstractEntity {
     private String estado;
     
     
-	public byte[] getImagen() {
-		return imagen;
-	}
-	public void setImagen(byte[] imagen) {
-		this.imagen = imagen;
-	}
+	
 	public String getNombreRepuesto() {
 		return nombreRepuesto;
 	}
