@@ -1,4 +1,4 @@
-package hn.ventaderepuestos.views.categorias;
+package hn.ventaderepuestos.views.ordenes;
 
 public class CategoriaRepuesto {
 

@@ -11,7 +11,7 @@ import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import hn.ventaderepuestos.views.categorias.CategoriasView;
+import hn.ventaderepuestos.views.ordenes.OrdenesView;
 import hn.ventaderepuestos.views.proveedor.ProveedorView;
 import hn.ventaderepuestos.views.repuestos.RepuestosView;
 import org.vaadin.lineawesome.LineAwesomeIcon;
@@ -54,7 +54,7 @@ public class MainLayout extends AppLayout {
 
         nav.addItem(new SideNavItem("Repuestos", RepuestosView.class, LineAwesomeIcon.TOOLS_SOLID.create()));
         nav.addItem(new SideNavItem("Proveedor", ProveedorView.class, LineAwesomeIcon.TRUCK_SOLID.create()));
-        nav.addItem(new SideNavItem("Categorias", CategoriasView.class, LineAwesomeIcon.STREAM_SOLID.create()));
+        nav.addItem(new SideNavItem("Ordenes", OrdenesView.class, LineAwesomeIcon.STREAM_SOLID.create()));
 
         return nav;
     }
