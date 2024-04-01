@@ -23,11 +23,13 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
+import hn.ventaderepuestos.data.Orden;
 import hn.ventaderepuestos.data.Proveedor;
 import hn.ventaderepuestos.data.Repuesto;
 import hn.ventaderepuestos.services.SamplePersonService;
 import hn.ventaderepuestos.views.MainLayout;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +38,8 @@ import org.springframework.data.domain.PageRequest;
 @Route(value = "ordenes", layout = MainLayout.class)
 @Uses(Icon.class)
 public class OrdenesView extends Composite<VerticalLayout> {
+
+    private final Grid<Orden> historialOrdenes = new Grid<>(Orden.class, false);
 
     public OrdenesView() {
         VerticalLayout layoutColumn2 = new VerticalLayout();
@@ -58,7 +62,9 @@ public class OrdenesView extends Composite<VerticalLayout> {
         Button buttonSecondary = new Button();
         Hr hr2 = new Hr();
         H3 h32 = new H3();
-        Grid minimalistGrid = new Grid(Proveedor.class);
+
+        //Grid historialOrdenes = new Grid(Proveedor.class);
+
         getContent().setWidth("100%");
         getContent().getStyle().set("flex-grow", "1");
         getContent().setJustifyContentMode(JustifyContentMode.START);
@@ -100,10 +106,24 @@ public class OrdenesView extends Composite<VerticalLayout> {
         buttonSecondary.setWidth("min-content");
         h32.setText("Historial de ordenes");
         h32.setWidth("max-content");
-        minimalistGrid.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER,
+
+        //PARTE DEL GRID
+
+        historialOrdenes.addThemeVariants(GridVariant.LUMO_COMPACT, GridVariant.LUMO_NO_BORDER,
                 GridVariant.LUMO_NO_ROW_BORDERS);
-        minimalistGrid.setWidth("100%");
-        minimalistGrid.getStyle().set("flex-grow", "0");
+        historialOrdenes.setWidth("100%");
+        historialOrdenes.getStyle().set("flex-grow", "0");
+
+
+        historialOrdenes.addColumn("nombre").setAutoWidth(true);
+        historialOrdenes.addColumn("descripcion").setAutoWidth(true);
+        historialOrdenes.addColumn("cantidad").setAutoWidth(true);
+        historialOrdenes.addColumn("precio").setAutoWidth(true);
+        historialOrdenes.addColumn("total").setAutoWidth(true);
+        historialOrdenes.addColumn("proveedor").setAutoWidth(true);
+        historialOrdenes.addColumn("fecha").setAutoWidth(true);
+        historialOrdenes.addColumn("estado").setAutoWidth(true);
+        historialOrdenes.addColumn("observaciones").setAutoWidth(true);
 
 
         getContent().add(layoutColumn2);
@@ -126,7 +146,8 @@ public class OrdenesView extends Composite<VerticalLayout> {
         layoutRow2.add(buttonSecondary);
         layoutColumn2.add(hr2);
         layoutColumn2.add(h32);
-        layoutColumn2.add(minimalistGrid);
+
+        layoutColumn2.add(historialOrdenes);
 
     }
 
@@ -142,6 +163,11 @@ public class OrdenesView extends Composite<VerticalLayout> {
         comboBox.setItems(sampleItems);
         comboBox.setItemLabelGenerator(item -> ((SampleItem) item).label());
     }
+
+    public void mostrarOrdenEnGrid(List<Orden> items) {
+    Collection<Orden> itemsCollection = items;
+    historialOrdenes.setItems(itemsCollection);
+}
 
 
 }
