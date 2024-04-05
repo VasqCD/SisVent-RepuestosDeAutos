@@ -51,7 +51,7 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 @RouteAlias(value = "", layout = MainLayout.class)
 public class RepuestosView extends Div implements BeforeEnterObserver, ViewModelRepuesto {
 
-	private final String SAMPLEBOOK_ID = "nombre";
+    private final String SAMPLEBOOK_ID = "nombre";
     private final String SAMPLEBOOK_EDIT_ROUTE_TEMPLATE = "repuestos/%s/edit";
 
     private final Grid<Repuesto> grid = new Grid<>(Repuesto.class, false);
@@ -108,7 +108,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
             }
         });
         
-        controlador.consultarRepuesto(repuestoSeleccionado);
+        controlador.consultarRepuesto();
 
         
         // Configure Form
@@ -124,22 +124,9 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
             try {
                 if (this.repuestoSeleccionado == null) {
                     this.repuestoSeleccionado = new Repuesto();
-                
-                    this.repuestoSeleccionado.setNombre(nombre.getValue());
-                    this.repuestoSeleccionado.setMarca(marca.getValue());
-                    this.repuestoSeleccionado.setPrecio(precio.getValue());
-                    this.repuestoSeleccionado.setStock(stock.getValue());
-                    this.repuestoSeleccionado.setEstado(estado.getValue());
-                    
-                    this.controlador.consultarRepuesto(repuestoSeleccionado);
-                    
-                    }else {
-                	
-                 }
-                
-                
+                }
             
-                clearForm();;
+                clearForm();
                 refreshGrid();
                 Notification.show("Datos actualizados");
                 UI.getCurrent().navigate(ProveedorView.class);
