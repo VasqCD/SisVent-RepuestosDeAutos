@@ -1,8 +1,11 @@
 package hn.ventaderepuestos.controller;
 
+import hn.ventaderepuestos.data.Repuesto;
+
 public interface InteractorRepuesto {
 
-	void consultarRepuesto();
+	void consultarRepuesto(Repuesto repuestoSeleccionado);
+
 
 
 }

@@ -37,7 +37,7 @@ public class Repuesto extends AbstractEntity {
 	public int getStock() {
 		return stock;
 	}
-	public void setStock(int stock) {
+	public void setStock(String stock) {
 		this.stock = stock;
 	}
 	public String getEstado() {
