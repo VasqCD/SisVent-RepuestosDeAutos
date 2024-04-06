@@ -2,6 +2,7 @@ package hn.ventaderepuestos.controller;
 
 
 
+import hn.ventaderepuestos.data.Proveedor;
 import hn.ventaderepuestos.data.ProveedoresResponse;
 import hn.ventaderepuestos.model.DatabaseRepositoryImpl;
 import hn.ventaderepuestos.views.proveedor.ViewModelProveedor;
@@ -27,6 +28,20 @@ public class InteractorImplProveedor implements InteractorProveedor {
 				this.vista.mostrarMensajeError("No hay proveedor a mostrar");
 			}else {
 				this.vista.mostrarProveedorEnGrid(respuesta.getItems());
+			}
+		}catch(Exception error) {
+			error.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void crearProveedor(Proveedor nuevo) {
+		try {
+			boolean  creado = this.modelo.crearProveedor(nuevo);
+			if(creado == true) {
+				this.vista.mostrarMensajeExito("Proveedor creado exitosamente");
+			}else {
+				this.vista.mostrarMensajeError("Hay un problema al crear el proveedor");
 			}
 		}catch(Exception error) {
 			error.printStackTrace();

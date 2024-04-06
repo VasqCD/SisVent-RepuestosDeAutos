@@ -3,47 +3,31 @@ package hn.ventaderepuestos.views.repuestos;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.data.binder.BeanValidationBinder;
-import com.vaadin.flow.data.binder.ValidationException;
-import com.vaadin.flow.data.converter.StringToIntegerConverter;
-import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
-import com.vaadin.flow.server.StreamResource;
-import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 
 import hn.ventaderepuestos.controller.InteractorImplRepuesto;
 import hn.ventaderepuestos.controller.InteractorRepuesto;
 import hn.ventaderepuestos.data.Repuesto;
-import hn.ventaderepuestos.services.SampleBookService;
 import hn.ventaderepuestos.views.MainLayout;
-import hn.ventaderepuestos.views.proveedor.ProveedorView;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @PageTitle("Repuestos")
@@ -62,6 +46,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
     private TextField precio;
     private TextField stock;
     private TextField estado;
+    private TextField proveedor;
 
     private final Button cancelar = new Button("Cancelar");
     private final Button guardar = new Button("Guardar");
@@ -94,6 +79,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
         grid.addColumn("precio").setAutoWidth(true);
         grid.addColumn("stock").setAutoWidth(true);
         grid.addColumn("estado").setAutoWidth(true);
+        grid.addColumn("proveedor").setAutoWidth(true);
         
 
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
@@ -120,16 +106,28 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
             refreshGrid();
         });
 
+        //BOTON GUARDAR
         guardar.addClickListener(e -> {
             try {
                 if (this.repuestoSeleccionado == null) {
                     this.repuestoSeleccionado = new Repuesto();
+                    
+                    this.repuestoSeleccionado.setNombre(nombre.getValue());
+                    this.repuestoSeleccionado.setMarca(marca.getValue());
+                    this.repuestoSeleccionado.setPrecio(precio.getValue());
+                    this.repuestoSeleccionado.setStock(Integer.parseInt(stock.getValue()));
+                    this.repuestoSeleccionado.setEstado(estado.getValue());
+                    this.repuestoSeleccionado.setProveedor(proveedor.getValue());
+                    
+                    this.controlador.crearRepuesto(repuestoSeleccionado);
+                }else {
+                	
                 }
+
             
                 clearForm();
                 refreshGrid();
-                Notification.show("Datos actualizados");
-                UI.getCurrent().navigate(ProveedorView.class);
+                UI.getCurrent().navigate(RepuestosView.class);
             } catch (ObjectOptimisticLockingFailureException exception) {
                 Notification n = Notification.show(
                         "Error updating the data. Somebody else has updated the record while you were making changes.");
@@ -138,6 +136,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
             }
         });
         
+        // BOTN ELIMINAR
         eliminar.addClickListener( e-> {
           	 Notification n = Notification.show("Botón eliminar seleccionado, aún no hay nada que eliminar");
           	 n.setPosition(Position.MIDDLE);
@@ -193,8 +192,10 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
         stock.setId("txt_unidades");
         estado = new TextField("Estado");
         estado.setId("txt_estado");
-        
-        formLayout.add(nombre, marca, precio, stock, estado);
+        proveedor = new TextField("Proveedor");
+        proveedor.setId("txt_proveedor");
+       
+        formLayout.add(nombre, marca, precio, stock, estado, proveedor);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -228,6 +229,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
     private void refreshGrid() {
         grid.select(null);
         grid.getDataProvider().refreshAll();
+        this.controlador.consultarRepuesto();
     }
 
     private void clearForm() {
@@ -242,6 +244,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
     	   precio.setValue(value.getPrecio());
     	   stock.setValue(String.valueOf(value.getStock()));
     	   estado.setValue(value.getEstado());
+    	   proveedor.setValue(value.getProveedor());
     	   
        }else {
     	   nombre.setValue("");
@@ -249,6 +252,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
     	   precio.setValue("");
     	   stock.setValue("");
     	   estado.setValue("");
+    	   proveedor.setValue("");
        }
 
     }
@@ -262,6 +266,11 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
     
     @Override
     public void mostrarMensajeError(String mensaje) {
+    	Notification.show(mensaje);
+    }
+    
+    @Override
+    public void mostrarMensajeExito(String mensaje) {
     	Notification.show(mensaje);
     }
     

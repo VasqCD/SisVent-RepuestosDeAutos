@@ -15,6 +15,8 @@ public class Repuesto extends AbstractEntity {
     private String precio;
     private int stock;
     private String estado;
+    private String proveedor;
+    
 	public String getNombre() {
 		return nombre;
 	}
@@ -46,6 +48,13 @@ public class Repuesto extends AbstractEntity {
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
+	public String getProveedor() {
+		return proveedor;
+	}
+	public void setProveedor(String proveedor) {
+		this.proveedor = proveedor;
+	}
+	
     
     
 }

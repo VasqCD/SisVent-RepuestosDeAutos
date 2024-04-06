@@ -2,8 +2,11 @@ package hn.ventaderepuestos.model;
 
 import java.io.IOException;
 
+import hn.ventaderepuestos.data.Proveedor;
 import hn.ventaderepuestos.data.ProveedoresResponse;
+import hn.ventaderepuestos.data.Repuesto;
 import hn.ventaderepuestos.data.RepuestoResponse;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -45,6 +48,18 @@ public class DatabaseRepositoryImpl {
 		}else {
 			return null;
 		}
+	}
+	
+	public boolean crearRepuesto(Repuesto nuevo) throws IOException{
+		Call<ResponseBody> call = client.getDB().crearRepuesto(nuevo);
+		Response<ResponseBody> response = call.execute();//AQUI ES DONDE SE LLAMA A LA BASE DE DATOS
+		return response.isSuccessful();
+	}
+	
+	public boolean crearProveedor(Proveedor nuevo) throws IOException{
+		Call<ResponseBody> call = client.getDB().crearProveedor(nuevo);
+		Response<ResponseBody> response = call.execute();//AQUI ES DONDE SE LLAMA A LA BASE DE DATOS
+		return response.isSuccessful();
 	}
 
 }

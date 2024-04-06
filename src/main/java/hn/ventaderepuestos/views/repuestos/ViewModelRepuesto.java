@@ -9,5 +9,7 @@ public interface ViewModelRepuesto {
 	void mostrarRepuestoEnGrid(List<Repuesto> items);
 	
 	void mostrarMensajeError(String mensaje);
+	
+	void mostrarMensajeExito(String mensaje);
 
 }

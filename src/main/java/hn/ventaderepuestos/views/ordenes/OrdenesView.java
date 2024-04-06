@@ -84,18 +84,24 @@ public class OrdenesView extends Composite<VerticalLayout> {
         checkbox2.setLabel("Compra");
         checkbox2.setWidth("min-content");
         formLayout2Col.setWidth("100%");
-        textField.setLabel("First Name");
-        textField2.setLabel("Last Name");
-        datePicker.setLabel("Birthday");
-        textField3.setLabel("Phone Number");
-        emailField.setLabel("Email");
-        textField4.setLabel("Occupation");
-        comboBox.setLabel("Producto");
+        
+        comboBox.setLabel("Repuesto");
         comboBox.setWidth("min-content");
         setComboBoxSampleData(comboBox);
+        
         comboBox2.setLabel("Proveedor");
         comboBox2.setWidth("min-content");
         setComboBoxSampleData(comboBox2);
+        
+        textField.setLabel("Cantidad");
+        textField2.setLabel("Observaciones");
+        datePicker.setLabel("Fecha de compra");
+        textField3.setLabel("Estado de compra");
+        emailField.setLabel("Tipo");
+        //textField4.setLabel("Occupation");
+        
+ 
+        
         layoutRow2.addClassName(Gap.MEDIUM);
         layoutRow2.setWidth("100%");
         layoutRow2.getStyle().set("flex-grow", "1");
@@ -115,15 +121,13 @@ public class OrdenesView extends Composite<VerticalLayout> {
         historialOrdenes.getStyle().set("flex-grow", "0");
 
 
-        historialOrdenes.addColumn("nombre").setAutoWidth(true);
-        historialOrdenes.addColumn("descripcion").setAutoWidth(true);
+        historialOrdenes.addColumn("repuestoid").setAutoWidth(true);
+        historialOrdenes.addColumn("proveedorid").setAutoWidth(true);
         historialOrdenes.addColumn("cantidad").setAutoWidth(true);
-        historialOrdenes.addColumn("precio").setAutoWidth(true);
-        historialOrdenes.addColumn("total").setAutoWidth(true);
-        historialOrdenes.addColumn("proveedor").setAutoWidth(true);
         historialOrdenes.addColumn("fecha").setAutoWidth(true);
-        historialOrdenes.addColumn("estado").setAutoWidth(true);
         historialOrdenes.addColumn("observaciones").setAutoWidth(true);
+        historialOrdenes.addColumn("estado").setAutoWidth(true);
+        historialOrdenes.addColumn("tipo").setAutoWidth(true);
 
 
         getContent().add(layoutColumn2);
@@ -133,14 +137,15 @@ public class OrdenesView extends Composite<VerticalLayout> {
         layoutRow.add(checkbox);
         layoutRow.add(checkbox2);
         layoutColumn2.add(formLayout2Col);
-        formLayout2Col.add(textField);
-        formLayout2Col.add(textField2);
-        formLayout2Col.add(datePicker);
-        formLayout2Col.add(textField3);
-        formLayout2Col.add(emailField);
-        formLayout2Col.add(textField4);
         formLayout2Col.add(comboBox);
         formLayout2Col.add(comboBox2);
+        formLayout2Col.add(textField);
+        formLayout2Col.add(datePicker);
+        formLayout2Col.add(textField2);
+        
+        formLayout2Col.add(textField3);
+        formLayout2Col.add(emailField);
+        //formLayout2Col.add(textField4);
         layoutColumn2.add(layoutRow2);
         layoutRow2.add(buttonPrimary);
         layoutRow2.add(buttonSecondary);

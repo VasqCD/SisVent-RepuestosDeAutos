@@ -1,5 +1,6 @@
 package hn.ventaderepuestos.controller;
 
+import hn.ventaderepuestos.data.Repuesto;
 import hn.ventaderepuestos.data.RepuestoResponse;
 import hn.ventaderepuestos.model.DatabaseRepositoryImpl;
 import hn.ventaderepuestos.views.repuestos.ViewModelRepuesto;
@@ -25,6 +26,20 @@ public class InteractorImplRepuesto implements InteractorRepuesto{
 				this.vista.mostrarMensajeError("No hay repuestos a mostrar");
 			}else {
 				this.vista.mostrarRepuestoEnGrid(respuesta.getItems());
+			}
+		}catch(Exception error) {
+			error.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void crearRepuesto(Repuesto nuevo) {
+		try {
+			boolean  creado = this.modelo.crearRepuesto(nuevo);
+			if(creado == true) {
+				this.vista.mostrarMensajeExito("Repuesto creado exitosamente");
+			}else {
+				this.vista.mostrarMensajeError("Hay un problema al crear el repuesto");
 			}
 		}catch(Exception error) {
 			error.printStackTrace();

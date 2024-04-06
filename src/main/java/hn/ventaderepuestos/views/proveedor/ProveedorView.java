@@ -110,11 +110,21 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
             try {
                 if (this.proveedorSeleccionado == null) {
                     this.proveedorSeleccionado = new Proveedor();
+                    
+                    this.proveedorSeleccionado.setNombre(nombre.getValue());
+                    this.proveedorSeleccionado.setDireccion(direccion.getValue());
+                    this.proveedorSeleccionado.setCorreo(correo.getValue());
+                    this.proveedorSeleccionado.setTelefono(telefono.getValue());
+                    this.proveedorSeleccionado.setPais(pais.getValue());
+                    this.proveedorSeleccionado.setEstado(estado.getValue());
+                    
+                    this.controlador.crearProveedor(proveedorSeleccionado);
+                }else {
+                	
                 }
                 
                 clearForm();
                 refreshGrid();
-                Notification.show("Datos actualizados");
                 UI.getCurrent().navigate(ProveedorView.class);
             } catch (ObjectOptimisticLockingFailureException exception) {
                 Notification n = Notification.show(
@@ -219,6 +229,7 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
     private void refreshGrid() {
         grid.select(null);
         grid.getDataProvider().refreshAll();
+        this.controlador.consultarProveedor();
     }
 
     private void clearForm() {
@@ -259,5 +270,10 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
 	public void mostrarMensajeError(String mensaje) {
 		Notification.show(mensaje);
 	}
+	
+	@Override
+    public void mostrarMensajeExito(String mensaje) {
+    	Notification.show(mensaje);
+    }
 	
 }
