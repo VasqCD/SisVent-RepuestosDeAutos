@@ -137,11 +137,22 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
         });
         
         // BOTN ELIMINAR
-        eliminar.addClickListener( e-> {
-          	 Notification n = Notification.show("Botón eliminar seleccionado, aún no hay nada que eliminar");
-          	 n.setPosition(Position.MIDDLE);
                n.addThemeVariants(NotificationVariant.LUMO_WARNING);
-          });
+        eliminar.addClickListener(e -> {
+            if (repuestoSeleccionado != null) {
+                controlador.eliminarRepuesto(repuestoSeleccionado);
+                Notification n = Notification.show("Repuesto eliminado correctamente");
+                n.setPosition(Position.MIDDLE);
+                n.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                clearForm();
+                refreshGrid();
+                UI.getCurrent().navigate(RepuestosView.class);
+            } else {
+                Notification n = Notification.show("No se ha seleccionado ningún repuesto para eliminar");
+                n.setPosition(Position.MIDDLE);
+                n.addThemeVariants(NotificationVariant.LUMO_WARNING);
+            }
+        });
     }
 
     @Override
@@ -212,6 +223,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
         guardar.setId("btn_guardar");
         guardar.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         eliminar.setId("btn_eliminar");
+        eliminar.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         
         buttonLayout.add(guardar, cancelar, eliminar);
         editorLayoutDiv.add(buttonLayout);
