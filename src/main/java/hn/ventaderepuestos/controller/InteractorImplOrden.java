@@ -33,17 +33,18 @@ public class InteractorImplOrden implements InteractorOrden {
     }
 
     @Override
-    public void crearOrden() {
+    public void crearOrden(Orden nueva) {
+        try {
+            boolean creado = this.modelo.crearOrden(nueva);
+            if (creado == true) {
+                this.vista.mostrarMensajeExito("Orden creada exitosamente");
+            } else {
+                this.vista.mostrarMensajeError("Hay un problema al crear la orden");
+            }
+        } catch (Exception error) {
+            error.printStackTrace();
+        }
 
     }
 
-    @Override
-    public void actualizarOrden() {
-
-    }
-
-    @Override
-    public void eliminarOrden() {
-
-    }
 }

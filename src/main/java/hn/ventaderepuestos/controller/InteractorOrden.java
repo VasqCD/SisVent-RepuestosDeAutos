@@ -5,7 +5,5 @@ import hn.ventaderepuestos.data.Orden;
 public interface InteractorOrden {
 
         void consultarOrden();
-        void crearOrden();
-        void actualizarOrden();
-        void eliminarOrden();
+        void crearOrden(Orden nueva);
 }

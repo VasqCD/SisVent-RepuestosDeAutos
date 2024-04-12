@@ -49,28 +49,29 @@ public class OrdenesView extends Composite<VerticalLayout> implements ViewModelO
         controlador = new InteractorImplOrden((ViewModelOrden) this);
         elementos = new ArrayList<>();
 
+
         VerticalLayout layoutColumn2 = new VerticalLayout();
         H3 h3 = new H3();
         Hr hr = new Hr();
         HorizontalLayout layoutRow = new HorizontalLayout();
-        Checkbox checkbox = new Checkbox();
-        Checkbox checkbox2 = new Checkbox();
+
+        Checkbox ventaCheckbox = new Checkbox();
+        Checkbox compraCheckbox = new Checkbox();
+        ComboBox repuestoComboBox = new ComboBox();
+        ComboBox proveedorComboBox = new ComboBox();
+
         FormLayout formLayout2Col = new FormLayout();
-        TextField textField = new TextField();
-        TextField textField2 = new TextField();
-        DatePicker datePicker = new DatePicker();
-        TextField textField3 = new TextField();
-        EmailField emailField = new EmailField();
-        TextField textField4 = new TextField();
-        ComboBox comboBox = new ComboBox();
-        ComboBox comboBox2 = new ComboBox();
+        TextField txtCantidad = new TextField();
+        TextField txtObservaciones = new TextField();
+        DatePicker fechaCompra = new DatePicker();
+        TextField txtEstado = new TextField();
+        TextField txtTipo = new TextField();
+
         HorizontalLayout layoutRow2 = new HorizontalLayout();
         Button buttonPrimary = new Button();
         Button buttonSecondary = new Button();
         Hr hr2 = new Hr();
         H3 h32 = new H3();
-
-        //Grid historialOrdenes = new Grid(Proveedor.class);
 
         getContent().setWidth("100%");
         getContent().getStyle().set("flex-grow", "1");
@@ -86,25 +87,52 @@ public class OrdenesView extends Composite<VerticalLayout> implements ViewModelO
         layoutRow.addClassName(Gap.MEDIUM);
         layoutRow.setWidth("100%");
         layoutRow.getStyle().set("flex-grow", "1");
-        checkbox.setLabel("Venta");
-        checkbox.setWidth("min-content");
-        checkbox2.setLabel("Compra");
-        checkbox2.setWidth("min-content");
+
+        ventaCheckbox.setLabel("Venta");
+        ventaCheckbox.setWidth("min-content");
+
+        ventaCheckbox.addValueChangeListener(event -> {
+            if (event.getValue()) {
+                proveedorComboBox.setReadOnly(true);
+                compraCheckbox.setValue(false);
+                txtTipo.setValue("Venta");
+                txtTipo.setReadOnly(true);
+            } else {
+                proveedorComboBox.setReadOnly(false);
+                txtTipo.setValue("");
+                txtTipo.setReadOnly(false);
+            }
+        });
+
+        compraCheckbox.setLabel("Compra");
+        compraCheckbox.setWidth("min-content");
         formLayout2Col.setWidth("100%");
+
+        compraCheckbox.addValueChangeListener(event -> {
+            if (event.getValue()) {
+                ventaCheckbox.setValue(false);
+                txtTipo.setValue("Compra");
+                txtTipo.setReadOnly(true);
+            } else {
+                repuestoComboBox.setReadOnly(false);
+                txtTipo.setValue("");
+                txtTipo.setReadOnly(false);
+            }
+        });
+
+        repuestoComboBox.setLabel("Repuesto");
+        repuestoComboBox.setWidth("min-content");
+        setComboBoxSampleData(repuestoComboBox);
+
+        proveedorComboBox.setLabel("Proveedor");
+        proveedorComboBox.setWidth("min-content");
+        setComboBoxSampleData(proveedorComboBox);
         
-        comboBox.setLabel("Repuesto");
-        comboBox.setWidth("min-content");
-        setComboBoxSampleData(comboBox);
-        
-        comboBox2.setLabel("Proveedor");
-        comboBox2.setWidth("min-content");
-        setComboBoxSampleData(comboBox2);
-        
-        textField.setLabel("Cantidad");
-        textField2.setLabel("Observaciones");
-        datePicker.setLabel("Fecha de compra");
-        textField3.setLabel("Estado de compra");
-        emailField.setLabel("Tipo");
+        txtCantidad.setLabel("Cantidad");
+        txtObservaciones.setLabel("Observaciones");
+        fechaCompra.setLabel("Fecha de compra");
+        txtEstado.setLabel("Estado de compra"); //
+        txtTipo.setLabel("Tipo");
         //textField4.setLabel("Occupation");
         
  
@@ -138,22 +166,23 @@ public class OrdenesView extends Composite<VerticalLayout> implements ViewModelO
         historialOrdenes.addColumn("tipo").setAutoWidth(true);
 
 
+        controlador.consultarOrden();
+
         getContent().add(layoutColumn2);
         layoutColumn2.add(h3);
         layoutColumn2.add(hr);
         layoutColumn2.add(layoutRow);
-        layoutRow.add(checkbox);
-        layoutRow.add(checkbox2);
+        layoutRow.add(ventaCheckbox);
+        layoutRow.add(compraCheckbox);
         layoutColumn2.add(formLayout2Col);
-        formLayout2Col.add(comboBox);
-        formLayout2Col.add(comboBox2);
-        formLayout2Col.add(textField);
-        formLayout2Col.add(datePicker);
-        formLayout2Col.add(textField2);
+        formLayout2Col.add(repuestoComboBox);
+        formLayout2Col.add(proveedorComboBox);
+        formLayout2Col.add(txtCantidad);
+        formLayout2Col.add(fechaCompra);
+        formLayout2Col.add(txtObservaciones);
         
-        formLayout2Col.add(textField3);
-        formLayout2Col.add(emailField);
-        //formLayout2Col.add(textField4);
+        formLayout2Col.add(txtEstado);
+        formLayout2Col.add(txtTipo);
         layoutColumn2.add(layoutRow2);
         layoutRow2.add(buttonPrimary);
         layoutRow2.add(buttonSecondary);
@@ -171,10 +200,7 @@ public class OrdenesView extends Composite<VerticalLayout> implements ViewModelO
 
     @Override
     public void mostrarOrdenEnGrid(Collection<Orden> ordenes) {
-        Collection<Orden> itemsCollection = ordenes;
-        historialOrdenes.setItems(itemsCollection);
-        this.elementos = ordenes.stream().toList();
-
+        historialOrdenes.setItems(ordenes);
     }
 
     @Override
@@ -195,10 +221,9 @@ public class OrdenesView extends Composite<VerticalLayout> implements ViewModelO
         comboBox.setItemLabelGenerator(item -> ((SampleItem) item).label());
     }
 
-    public void mostrarOrdenEnGrid(List<Orden> items) {
-    Collection<Orden> itemsCollection = items;
-    historialOrdenes.setItems(itemsCollection);
-}
-
-
+    public void refresGrid() {
+        historialOrdenes.select(null);
+        historialOrdenes.getDataProvider().refreshAll();
+        this.controlador.consultarOrden();
+    }
 }

@@ -13,6 +13,7 @@ import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
@@ -46,7 +47,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
     private TextField nombre;
     private TextField marca;
     private TextField precio;
-    private TextField stock;
+    private NumberField stock;
     private TextField estado;
     private ComboBox<Proveedor> proveedor;
 
@@ -104,12 +105,15 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
         controlador.consultarProveedor();
         
         // Configure Form
-        
-    
-
+        cancelar.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         cancelar.addClickListener(e -> {
             clearForm();
             refreshGrid();
+        });
+
+        stock.addValueChangeListener(e -> {
+            // Cambiar estado de acuerdo a stock
+            estado.setValue(e.getValue().intValue() > 0 ? "Activo" : "Inactivo");
         });
 
         //BOTON GUARDAR
@@ -123,7 +127,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
                     this.repuestoSeleccionado.setNombre(nombre.getValue());
                     this.repuestoSeleccionado.setMarca(marca.getValue());
                     this.repuestoSeleccionado.setPrecio(precio.getValue());
-                    this.repuestoSeleccionado.setStock(Integer.parseInt(stock.getValue()));
+                    this.repuestoSeleccionado.setStock(stock.getValue().intValue());
                     this.repuestoSeleccionado.setEstado(estado.getValue());
                     this.repuestoSeleccionado.setProveedor(String.valueOf(proveedor.getValue().getProveedorid()));
                     
@@ -134,8 +138,10 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
                     this.repuestoSeleccionado.setNombre(nombre.getValue());
                     this.repuestoSeleccionado.setMarca(marca.getValue());
                     this.repuestoSeleccionado.setPrecio(precio.getValue());
-                    this.repuestoSeleccionado.setStock(Integer.parseInt(stock.getValue()));
-                    this.repuestoSeleccionado.setEstado(estado.getValue());
+                    int stockValue = stock.getValue().intValue();
+                    this.repuestoSeleccionado.setStock(stockValue);
+                    // Set estado based on stock value
+                    this.repuestoSeleccionado.setEstado(stockValue > 0 ? "Activo" : "Inactivo");
                     this.repuestoSeleccionado.setProveedor(String.valueOf(proveedor.getValue().getProveedorid()));
 
                     this.controlador.actualizarRepuesto(repuestoSeleccionado);
@@ -206,13 +212,19 @@ public void beforeEnter(BeforeEnterEvent event) {
         FormLayout formLayout = new FormLayout();
         repuestoid = new TextField("Codigo de repuesto");
         repuestoid.setId("txt_codigoRepuesto");
+        repuestoid.setValue("0");
+        repuestoid.setEnabled(false);
+
         nombre = new TextField("Nombre de repuesto");
         nombre.setId("txt_nombreRepuesto");
+
         marca = new TextField("Marca de repuesto");
         marca.setId("txt_marcaRepuesto");
+
         precio = new TextField("Precio unitario");
         precio.setId("txt_precioUnitario");
-        stock = new TextField("Unidades en Stock");
+
+        stock = new NumberField("Unidades en Stock");
         stock.setId("txt_unidades");
 
         proveedor = new ComboBox<>("Proveedor");
@@ -221,6 +233,7 @@ public void beforeEnter(BeforeEnterEvent event) {
 
         estado = new TextField("Estado");
         estado.setId("txt_estado");
+        estado.setVisible(false); // No mostrar el campo de estado, ya que se calcula en base a stock
 
         //metodo add agrega el control a la pantalla
         formLayout.add(repuestoid, nombre, marca, precio, stock, proveedor, estado);
@@ -275,19 +288,19 @@ public void beforeEnter(BeforeEnterEvent event) {
     	   nombre.setValue(value.getNombre());
     	   marca.setValue(value.getMarca());
     	   precio.setValue(value.getPrecio());
-    	   stock.setValue(String.valueOf(value.getStock()));
+           stock.setValue(Double.valueOf(value.getStock()));
            proveedorSeleccionado = buscarProveedor(Integer.parseInt(value.getProveedor()));
               proveedor.setValue(proveedorSeleccionado);
     	   estado.setValue(value.getEstado());
     	   
        }else {
-           repuestoid.setValue("");
+           repuestoid.setValue("0");
     	   nombre.setValue("");
     	   marca.setValue("");
     	   precio.setValue("");
-    	   stock.setValue("");
+    	   stock.setValue(0.0);
            proveedor.clear();
-    	   estado.setValue("");
+    	   estado.setValue("Activo");
 
        }
     }

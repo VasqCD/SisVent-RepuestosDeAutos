@@ -47,7 +47,7 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
     private TextField correo;
     private TextField telefono;
     private TextField pais;
-    private TextField estado;
+
 
 
     private final Button cancelar = new Button("Cancelar");
@@ -81,7 +81,6 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
         grid.addColumn("correo").setAutoWidth(true);
         grid.addColumn("telefono").setAutoWidth(true);
         grid.addColumn("pais").setAutoWidth(true);
-        grid.addColumn("estado").setAutoWidth(true);
         
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
@@ -99,8 +98,7 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
         
 
         // Configure Form
-       
-
+        cancelar.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         cancelar.addClickListener(e -> {
             clearForm();
             refreshGrid();
@@ -119,7 +117,6 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
                     this.proveedorSeleccionado.setCorreo(correo.getValue());
                     this.proveedorSeleccionado.setTelefono(telefono.getValue());
                     this.proveedorSeleccionado.setPais(pais.getValue());
-                    this.proveedorSeleccionado.setEstado(estado.getValue());
                     
                     this.controlador.crearProveedor(proveedorSeleccionado);
                 }else {
@@ -129,7 +126,6 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
                     this.proveedorSeleccionado.setCorreo(correo.getValue());
                     this.proveedorSeleccionado.setTelefono(telefono.getValue());
                     this.proveedorSeleccionado.setPais(pais.getValue());
-                    this.proveedorSeleccionado.setEstado(estado.getValue());
 
                     this.controlador.actualizarProveedor(proveedorSeleccionado);
                 	
@@ -148,9 +144,14 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
 
         //boton eliminar
         eliminar.addClickListener( e-> {
-       	 Notification n = Notification.show("Botón eliminar seleccionado, aún no hay nada que eliminar");
-       	 n.setPosition(Position.MIDDLE);
-            n.addThemeVariants(NotificationVariant.LUMO_WARNING);
+       	             	if(this.proveedorSeleccionado != null) {
+            		this.controlador.eliminarProveedor(String.valueOf(this.proveedorSeleccionado.getProveedorid()));
+            		clearForm();
+                    refreshGrid();
+                    UI.getCurrent().navigate(ProveedorView.class);
+            	}else {
+            		Notification.show("Seleccione un proveedor a eliminar");
+            	}
        });
     }
     
@@ -176,10 +177,10 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
         }
     }
     
-    private Proveedor obtenerProveedor(String nombre) {
+    private Proveedor obtenerProveedor(String proveedorid) {
 		Proveedor encontrado = null;
     	for(Proveedor prov: elementos) {
-			if(prov.getNombre().equals(nombre)) {
+			if(prov.getProveedorid() == Integer.parseInt(proveedorid)) {
 				encontrado = prov;
 				break;
 			}
@@ -198,21 +199,26 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
         FormLayout formLayout = new FormLayout();
         proveedorid = new TextField("ID");
         proveedorid.setId("txt_idProveedor");
+        proveedorid.setValue("0");
+        proveedorid.setEnabled(false);
+
         nombre = new TextField("Nombre Proveedor");
         nombre.setId("txt_nomProveedor");
+
         direccion = new TextField("Direccion");
         direccion.setId("txt_Direccion");
+
         correo = new TextField("Correo Electronico");
         correo.setId("txt_correo");
+
         telefono = new TextField("Telefono");
         telefono.setId("txt_telefono");
+
         pais = new TextField("Pais");
         pais.setId("txt_pais");
-        estado = new TextField("Estado");
-        estado.setId("txt_estado");
 
-        
-        formLayout.add(proveedorid, nombre, direccion, correo, telefono, pais, estado);
+        //agreaga el control a la vista
+        formLayout.add(proveedorid, nombre, direccion, correo, telefono, pais);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -265,16 +271,14 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
         	correo.setValue(value.getCorreo());
         	telefono.setValue(value.getCorreo());
         	pais.setValue(value.getPais());
-        	estado.setValue(value.getEstado());
         	
         }else {
-            proveedorid.setValue("");
+            proveedorid.setValue("0");
         	nombre.setValue("");
         	direccion.setValue("");
         	correo.setValue("");
         	telefono.setValue("");
         	pais.setValue("");
-        	estado.setValue("");
         }  
 
     }
