@@ -17,10 +17,7 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterObserver;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 
 import hn.ventaderepuestos.controller.InteractorImplProveedor;
 import hn.ventaderepuestos.controller.InteractorProveedor;
@@ -34,15 +31,17 @@ import java.util.Optional;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @PageTitle("Proveedor")
-@Route(value = "proveedor/:nombre?/:action?(edit)", layout = MainLayout.class)
+@Route(value = "proveedor/:proveedorid?/:action?(edit)", layout = MainLayout.class)
+//@RouteAlias(value = "", layout = MainLayout.class)
 @Uses(Icon.class)
 public class ProveedorView extends Div implements BeforeEnterObserver, ViewModelProveedor {
 
-    private final String SAMPLEPERSON_ID = "nombre";
+    private final String SAMPLEPERSON_ID = "proveedorid";
     private final String SAMPLEPERSON_EDIT_ROUTE_TEMPLATE = "proveedor/%s/edit";
 
     private final Grid<Proveedor> grid = new Grid<>(Proveedor.class, false);
 
+    private TextField proveedorid;
     private TextField nombre;
     private TextField direccion;
     private TextField correo;
@@ -76,6 +75,7 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
         add(splitLayout);
 
         // Configure Grid
+        grid.addColumn("proveedorid").setAutoWidth(true).setHeader("ID");
         grid.addColumn("nombre").setAutoWidth(true);
         grid.addColumn("direccion").setAutoWidth(true);
         grid.addColumn("correo").setAutoWidth(true);
@@ -88,7 +88,7 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
         // when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> {
             if (event.getValue() != null) {
-                UI.getCurrent().navigate(String.format(SAMPLEPERSON_EDIT_ROUTE_TEMPLATE, event.getValue().getNombre()));
+                UI.getCurrent().navigate(String.format(SAMPLEPERSON_EDIT_ROUTE_TEMPLATE, event.getValue().getProveedorid()));
             } else {
                 clearForm();
                 UI.getCurrent().navigate(ProveedorView.class);
@@ -106,11 +106,14 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
             refreshGrid();
         });
 
+        //boton guardar
         guardar.addClickListener(e -> {
             try {
                 if (this.proveedorSeleccionado == null) {
+                    //creacion de un nuevo proveedor
                     this.proveedorSeleccionado = new Proveedor();
-                    
+
+                    this.proveedorSeleccionado.setProveedorid(Integer.parseInt(proveedorid.getValue())); //se convierte a entero
                     this.proveedorSeleccionado.setNombre(nombre.getValue());
                     this.proveedorSeleccionado.setDireccion(direccion.getValue());
                     this.proveedorSeleccionado.setCorreo(correo.getValue());
@@ -120,6 +123,15 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
                     
                     this.controlador.crearProveedor(proveedorSeleccionado);
                 }else {
+                    //actualizacion de un proveedor
+                    this.proveedorSeleccionado.setNombre(nombre.getValue());
+                    this.proveedorSeleccionado.setDireccion(direccion.getValue());
+                    this.proveedorSeleccionado.setCorreo(correo.getValue());
+                    this.proveedorSeleccionado.setTelefono(telefono.getValue());
+                    this.proveedorSeleccionado.setPais(pais.getValue());
+                    this.proveedorSeleccionado.setEstado(estado.getValue());
+
+                    this.controlador.actualizarProveedor(proveedorSeleccionado);
                 	
                 }
                 
@@ -133,7 +145,8 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
                 n.addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
         });
-        
+
+        //boton eliminar
         eliminar.addClickListener( e-> {
        	 Notification n = Notification.show("Botón eliminar seleccionado, aún no hay nada que eliminar");
        	 n.setPosition(Position.MIDDLE);
@@ -145,14 +158,14 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        Optional<String> nombre = event.getRouteParameters().get(SAMPLEPERSON_ID);
-        if (nombre.isPresent()) {
-        	Proveedor proveedorObtenido = obtenerProveedor(nombre.get());
+        Optional<String> codigoProveedor = event.getRouteParameters().get(SAMPLEPERSON_ID);
+        if (codigoProveedor.isPresent()) {
+        	Proveedor proveedorObtenido = obtenerProveedor(codigoProveedor.get());
             if (proveedorObtenido != null) {
                 populateForm(proveedorObtenido);
             } else {
                 Notification.show(
-                        String.format("El proveedor con nombre = %s no existe", nombre.get()), 3000,
+                        String.format("El proveedor con ID = %s no existe", codigoProveedor.get()), 3000,
                         Notification.Position.BOTTOM_START);
                 // when a row is selected but the data is no longer available,
                 // refresh grid
@@ -183,6 +196,8 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
+        proveedorid = new TextField("ID");
+        proveedorid.setId("txt_idProveedor");
         nombre = new TextField("Nombre Proveedor");
         nombre.setId("txt_nomProveedor");
         direccion = new TextField("Direccion");
@@ -197,7 +212,7 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
         estado.setId("txt_estado");
 
         
-        formLayout.add(nombre, direccion, correo, telefono, pais, estado);
+        formLayout.add(proveedorid, nombre, direccion, correo, telefono, pais, estado);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -208,14 +223,17 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
     private void createButtonLayout(Div editorLayoutDiv) {
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setClassName("button-layout");
+
         cancelar.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         cancelar.setId("btn_cancelar");
+
         guardar.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         guardar.setId("btn_gurdar");
+
         eliminar.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         eliminar.setId("btn_eliminar");
         
-        buttonLayout.add(guardar, eliminar, cancelar);
+        buttonLayout.add(guardar, cancelar, eliminar);
         editorLayoutDiv.add(buttonLayout);
     }
 
@@ -240,7 +258,8 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
     private void populateForm(Proveedor value) {
     	this.proveedorSeleccionado = value;
         if(value != null) {
-        	
+
+            proveedorid.setValue(String.valueOf(value.getProveedorid())); //se convierte a string
         	nombre.setValue(value.getNombre());
         	direccion.setValue(value.getDireccion());
         	correo.setValue(value.getCorreo());
@@ -249,6 +268,7 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
         	estado.setValue(value.getEstado());
         	
         }else {
+            proveedorid.setValue("");
         	nombre.setValue("");
         	direccion.setValue("");
         	correo.setValue("");

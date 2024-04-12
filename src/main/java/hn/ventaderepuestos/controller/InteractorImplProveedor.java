@@ -48,4 +48,32 @@ public class InteractorImplProveedor implements InteractorProveedor {
 		}
 	}
 
+	@Override
+	public void actualizarProveedor(Proveedor cambiar) {
+		try {
+			boolean modificado = this.modelo.actualizarProveedor(cambiar);
+			if(modificado == true) {
+				this.vista.mostrarMensajeExito("Proveedor modificado exitosamente");
+			}else {
+				this.vista.mostrarMensajeError("Hay un problema al modificar el proveedor");
+			}
+		}catch(Exception error) {
+			error.printStackTrace();
+		}
+	}
+
+	@Override
+	public void eliminarProveedor(String codigoid) {
+		try {
+			boolean eliminado = this.modelo.eliminarProveedor(codigoid);
+			if(eliminado == true) {
+				this.vista.mostrarMensajeExito("Proveedor eliminado exitosamente");
+			}else {
+				this.vista.mostrarMensajeError("Hay un problema al eliminar el proveedor");
+			}
+		}catch(Exception error) {
+			error.printStackTrace();
+		}
+	}
+
 }

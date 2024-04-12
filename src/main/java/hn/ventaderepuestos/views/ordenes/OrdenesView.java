@@ -19,29 +19,36 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
+
 import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
+import hn.ventaderepuestos.controller.InteractorImplOrden;
+import hn.ventaderepuestos.controller.InteractorOrden;
 import hn.ventaderepuestos.data.Orden;
-import hn.ventaderepuestos.data.Proveedor;
-import hn.ventaderepuestos.data.Repuesto;
-import hn.ventaderepuestos.services.SamplePersonService;
+
 import hn.ventaderepuestos.views.MainLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+
 
 @PageTitle("Ordenes")
 @Route(value = "ordenes", layout = MainLayout.class)
 @Uses(Icon.class)
-public class OrdenesView extends Composite<VerticalLayout> {
+public class OrdenesView extends Composite<VerticalLayout> implements ViewModelOrden {
 
     private final Grid<Orden> historialOrdenes = new Grid<>(Orden.class, false);
 
+    private List<Orden> elementos;
+    private InteractorOrden controlador;
+
     public OrdenesView() {
+
+        controlador = new InteractorImplOrden((ViewModelOrden) this);
+        elementos = new ArrayList<>();
+
         VerticalLayout layoutColumn2 = new VerticalLayout();
         H3 h3 = new H3();
         Hr hr = new Hr();
@@ -121,6 +128,7 @@ public class OrdenesView extends Composite<VerticalLayout> {
         historialOrdenes.getStyle().set("flex-grow", "0");
 
 
+        historialOrdenes.addColumn("ordenid").setAutoWidth(true);
         historialOrdenes.addColumn("repuestoid").setAutoWidth(true);
         historialOrdenes.addColumn("proveedorid").setAutoWidth(true);
         historialOrdenes.addColumn("cantidad").setAutoWidth(true);
@@ -153,6 +161,24 @@ public class OrdenesView extends Composite<VerticalLayout> {
         layoutColumn2.add(h32);
 
         layoutColumn2.add(historialOrdenes);
+
+    }
+
+    @Override
+    public void mostrarMensajeError(String mensaje) {
+
+    }
+
+    @Override
+    public void mostrarOrdenEnGrid(Collection<Orden> ordenes) {
+        Collection<Orden> itemsCollection = ordenes;
+        historialOrdenes.setItems(itemsCollection);
+        this.elementos = ordenes.stream().toList();
+
+    }
+
+    @Override
+    public void mostrarMensajeExito(String mensaje) {
 
     }
 

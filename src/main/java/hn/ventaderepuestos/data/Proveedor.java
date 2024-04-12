@@ -2,11 +2,11 @@ package hn.ventaderepuestos.data;
 
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.Email;
-import java.time.LocalDate;
 
 @Entity
-public class Proveedor extends AbstractEntity {
+public class Proveedor extends AbstractEntity  {
 
+	private int proveedorid;
     private String nombre;
     private String direccion;
     @Email
@@ -53,5 +53,11 @@ public class Proveedor extends AbstractEntity {
 		this.estado = estado;
 	}
 
-    
+	public int getProveedorid() {
+		return proveedorid;
+	}
+
+	public void setProveedorid(int proveedorid) {
+		this.proveedorid = proveedorid;
+	}
 }
