@@ -79,7 +79,7 @@ public class DatabaseRepositoryImpl {
 		return response.isSuccessful();
 	}
 
-	public boolean eliminarProveedor(String proveedorid) throws IOException{
+	public boolean eliminarProveedor(int proveedorid) throws IOException{
 		Call<ResponseBody> call = client.getDB().eliminarProveedor(proveedorid);
 		Response<ResponseBody> response = call.execute();
 		return response.isSuccessful();

@@ -29,10 +29,10 @@ public interface DatabaseRepository {
 	Call<ResponseBody> actualizarRepuesto(@Body Repuesto cambiar);
 
 	@Headers({
-			"Accept: application/json",
+		
 			"User-Agent: Retrofit-Sample-App"
 	})
-	@DELETE("/pls/apex/cvasq/svra/Repuestos/")
+	@DELETE("/pls/apex/cvasq/svra/Repuestos")
 	Call<ResponseBody> eliminarRepuesto(@Query("repuestoid") int repuestoid);
 
 
@@ -62,10 +62,10 @@ public interface DatabaseRepository {
 
 	@Headers({
 		"Accept: application/json",
-		"User-Agent: Retrofit-Sample-App"
+
 	})
-	@DELETE("/pls/apex/cvasq/svra/Proveedor/")
-	Call<ResponseBody> eliminarProveedor(@Query("proveedorid") String proveedorid);
+	@DELETE("/pls/apex/cvasq/svra/Proveedor")
+	Call<ResponseBody> eliminarProveedor(@Query("proveedorid") int proveedorid);
 
 	//Ordenes
 	//https://apex.oracle.com/pls/apex/cvasq/svra/Ordenes
