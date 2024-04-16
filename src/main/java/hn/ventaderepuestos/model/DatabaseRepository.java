@@ -61,8 +61,8 @@ public interface DatabaseRepository {
 	Call<ResponseBody> actualizarProveedor(@Body Proveedor cambiar);
 
 	@Headers({
-		"Accept: application/json",
 
+			"User-Agent: Retrofit-Sample-App"
 	})
 	@DELETE("/pls/apex/cvasq/svra/Proveedores")
 	Call<ResponseBody> eliminarProveedor(@Query("proveedorid") int proveedorid);
