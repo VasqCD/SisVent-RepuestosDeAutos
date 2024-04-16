@@ -144,13 +144,13 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
 
         //boton eliminar
         eliminar.addClickListener( e-> {
-       	             	if(this.proveedorSeleccionado != null) {
-            		this.controlador.eliminarProveedor(String.valueOf(this.proveedorSeleccionado.getProveedorid()));
-            		clearForm();
-                    refreshGrid();
-                    UI.getCurrent().navigate(ProveedorView.class);
+       	             	if(proveedorSeleccionado == null) {
+       	             	mostrarMensajeError("Seleccione un proveedor para poder eliminar");
             	}else {
-            		Notification.show("Seleccione un proveedor a eliminar");
+            		this.controlador.eliminarProveedor(String.valueOf(proveedorSeleccionado.getProveedorid()));
+            		clearForm();
+            		refreshGrid();
+            		UI.getCurrent().navigate(ProveedorView.class);
             	}
        });
     }

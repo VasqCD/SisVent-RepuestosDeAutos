@@ -29,10 +29,10 @@ public interface DatabaseRepository {
 	Call<ResponseBody> actualizarRepuesto(@Body Repuesto cambiar);
 
 	@Headers({
-			"Accept: application/json",
+		
 			"User-Agent: Retrofit-Sample-App"
 	})
-	@DELETE("/pls/apex/cvasq/svra/Repuestos/")
+	@DELETE("/pls/apex/cvasq/svra/Repuestos")
 	Call<ResponseBody> eliminarRepuesto(@Query("repuestoid") int repuestoid);
 
 
@@ -42,30 +42,30 @@ public interface DatabaseRepository {
 			"Accept: application/json",
 			"User-Agent: Retrofit-Sample-App"
 	})
-	@GET("/pls/apex/cvasq/svra/Proveedores")
+	@GET("/pls/apex/cvasq/svra/Proveedor")
 	Call<ProveedoresResponse> consultarProveedor();
-	//https://apex.oracle.com/pls/apex/cvasq/svra/Proveedores
+	//https://apex.oracle.com/pls/apex/cvasq/svra/Proveedor
 
 	@Headers({
 		"Accept: application/json",
 		"User-Agent: Retrofit-Sample-App"
 	})
-	@POST("/pls/apex/cvasq/svra/Proveedores")
+	@POST("/pls/apex/cvasq/svra/Proveedor")
 	Call<ResponseBody> crearProveedor(@Body Proveedor nuevo);
 
 	@Headers({
 		"Accept: application/json",
 		"User-Agent: Retrofit-Sample-App"
 	})
-	@PUT("/pls/apex/cvasq/svra/Proveedores")
+	@PUT("/pls/apex/cvasq/svra/Proveedor")
 	Call<ResponseBody> actualizarProveedor(@Body Proveedor cambiar);
 
 	@Headers({
 		"Accept: application/json",
-		"User-Agent: Retrofit-Sample-App"
+
 	})
-	@DELETE("/pls/apex/cvasq/svra/Proveedores/")
-	Call<ResponseBody> eliminarProveedor(@Query("proveedorid") String proveedorid);
+	@DELETE("/pls/apex/cvasq/svra/Proveedor")
+	Call<ResponseBody> eliminarProveedor(@Query("proveedorid") int proveedorid);
 
 	//Ordenes
 	//https://apex.oracle.com/pls/apex/cvasq/svra/Ordenes

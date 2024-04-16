@@ -27,7 +27,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import hn.ventaderepuestos.controller.InteractorImplOrden;
 import hn.ventaderepuestos.controller.InteractorOrden;
 import hn.ventaderepuestos.data.Orden;
-
+import hn.ventaderepuestos.data.Proveedor;
 import hn.ventaderepuestos.views.MainLayout;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,11 +43,16 @@ public class OrdenesView extends Composite<VerticalLayout> implements ViewModelO
 
     private List<Orden> elementos;
     private InteractorOrden controlador;
+    
+    private ComboBox<Proveedor> proveedor;
+    private List<Proveedor> proveedores;
+    private Proveedor proveedorSeleccionado;
 
     public OrdenesView() {
 
         controlador = new InteractorImplOrden((ViewModelOrden) this);
         elementos = new ArrayList<>();
+        proveedores = new ArrayList<>();
 
 
         VerticalLayout layoutColumn2 = new VerticalLayout();
@@ -59,11 +64,13 @@ public class OrdenesView extends Composite<VerticalLayout> implements ViewModelO
         Checkbox compraCheckbox = new Checkbox();
         ComboBox repuestoComboBox = new ComboBox();
         ComboBox proveedorComboBox = new ComboBox();
+        
+        
 
         FormLayout formLayout2Col = new FormLayout();
         TextField txtCantidad = new TextField();
         TextField txtObservaciones = new TextField();
-        DatePicker fechaCompra = new DatePicker();
+        //DatePicker fechaCompra = new DatePicker();
         TextField txtEstado = new TextField();
         TextField txtTipo = new TextField();
 
@@ -130,7 +137,7 @@ public class OrdenesView extends Composite<VerticalLayout> implements ViewModelO
         
         txtCantidad.setLabel("Cantidad");
         txtObservaciones.setLabel("Observaciones");
-        fechaCompra.setLabel("Fecha de compra");
+        //fechaCompra.setLabel("Fecha de compra");
         txtEstado.setLabel("Estado de compra"); //
         txtTipo.setLabel("Tipo");
         //textField4.setLabel("Occupation");
@@ -157,8 +164,10 @@ public class OrdenesView extends Composite<VerticalLayout> implements ViewModelO
 
 
         historialOrdenes.addColumn("ordenid").setAutoWidth(true);
-        historialOrdenes.addColumn("repuestoid").setAutoWidth(true);
-        historialOrdenes.addColumn("proveedorid").setAutoWidth(true);
+        //historialOrdenes.addColumn("repuestoid").setAutoWidth(true);
+        historialOrdenes.addColumn("nombre_repuesto").setAutoWidth(true);
+        historialOrdenes.addColumn("nombre_proveedor").setAutoWidth(true);
+        //historialOrdenes.addColumn("proveedorid").setAutoWidth(true);
         historialOrdenes.addColumn("cantidad").setAutoWidth(true);
         historialOrdenes.addColumn("fecha").setAutoWidth(true);
         historialOrdenes.addColumn("observaciones").setAutoWidth(true);
@@ -178,7 +187,7 @@ public class OrdenesView extends Composite<VerticalLayout> implements ViewModelO
         formLayout2Col.add(repuestoComboBox);
         formLayout2Col.add(proveedorComboBox);
         formLayout2Col.add(txtCantidad);
-        formLayout2Col.add(fechaCompra);
+        //formLayout2Col.add(fechaCompra);
         formLayout2Col.add(txtObservaciones);
         
         formLayout2Col.add(txtEstado);
@@ -226,4 +235,17 @@ public class OrdenesView extends Composite<VerticalLayout> implements ViewModelO
         historialOrdenes.getDataProvider().refreshAll();
         this.controlador.consultarOrden();
     }
+    
+    private Proveedor buscarProveedor(int proveedorid) {
+    	Proveedor encontrado = null;
+    	for(Proveedor prov: proveedores) {
+    		if(prov.getProveedorid() == proveedorid) {
+    			encontrado = prov;
+    			break;
+    		}
+    	}
+    	return encontrado;
+    }
+    
+    
 }

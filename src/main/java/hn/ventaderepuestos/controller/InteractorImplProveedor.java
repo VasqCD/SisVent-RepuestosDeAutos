@@ -65,7 +65,7 @@ public class InteractorImplProveedor implements InteractorProveedor {
 	@Override
 	public void eliminarProveedor(String codigoid) {
 		try {
-			boolean eliminado = this.modelo.eliminarProveedor(codigoid);
+			boolean eliminado = this.modelo.eliminarProveedor(Integer.parseInt(codigoid));
 			if(eliminado == true) {
 				this.vista.mostrarMensajeExito("Proveedor eliminado exitosamente");
 			}else {

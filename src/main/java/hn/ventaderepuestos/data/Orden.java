@@ -10,6 +10,8 @@ public class Orden {
 	private String observaciones;
 	private int estado;
 	private String tipo;
+	private String nombre_repuesto;
+	private String nombre_proveedor;
 
 	public int getOrdenid() {
 		return ordenid;
@@ -74,4 +76,22 @@ public class Orden {
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
+
+	public String getNombre_repuesto() {
+		return nombre_repuesto;
+	}
+
+	public void setNombre_repuesto(String nombre_repuesto) {
+		this.nombre_repuesto = nombre_repuesto;
+	}
+
+	public String getNombre_proveedor() {
+		return nombre_proveedor;
+	}
+
+	public void setNombre_proveedor(String nombre_proveedor) {
+		this.nombre_proveedor = nombre_proveedor;
+	}
+	
+	
 }
