@@ -44,7 +44,7 @@ public interface DatabaseRepository {
 	})
 	@GET("/pls/apex/cvasq/svra/Proveedores")
 	Call<ProveedoresResponse> consultarProveedor();
-	//https://apex.oracle.com/pls/apex/cvasq/svra/Proveedor
+	//https://apex.oracle.com/pls/apex/cvasq/svra/Proveedores
 
 	@Headers({
 		"Accept: application/json",
