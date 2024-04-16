@@ -16,7 +16,7 @@ public class InteractorImplProveedor implements InteractorProveedor {
 		super();
 		this.vista = view;
 		this.modelo = DatabaseRepositoryImpl.getInstance("https://apex.oracle.com", 30000L);
-		//https://apex.oracle.com/pls/apex/cvasq/svra/Proveedor
+		//https://apex.oracle.com/pls/apex/cvasq/svra/Proveedores
 		
 	}
 	

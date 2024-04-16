@@ -42,7 +42,7 @@ public interface DatabaseRepository {
 			"Accept: application/json",
 			"User-Agent: Retrofit-Sample-App"
 	})
-	@GET("/pls/apex/cvasq/svra/Proveedor")
+	@GET("/pls/apex/cvasq/svra/Proveedores")
 	Call<ProveedoresResponse> consultarProveedor();
 	//https://apex.oracle.com/pls/apex/cvasq/svra/Proveedor
 
@@ -50,21 +50,21 @@ public interface DatabaseRepository {
 		"Accept: application/json",
 		"User-Agent: Retrofit-Sample-App"
 	})
-	@POST("/pls/apex/cvasq/svra/Proveedor")
+	@POST("/pls/apex/cvasq/svra/Proveedores")
 	Call<ResponseBody> crearProveedor(@Body Proveedor nuevo);
 
 	@Headers({
 		"Accept: application/json",
 		"User-Agent: Retrofit-Sample-App"
 	})
-	@PUT("/pls/apex/cvasq/svra/Proveedor")
+	@PUT("/pls/apex/cvasq/svra/Proveedores")
 	Call<ResponseBody> actualizarProveedor(@Body Proveedor cambiar);
 
 	@Headers({
 		"Accept: application/json",
 		"User-Agent: Retrofit-Sample-App"
 	})
-	@DELETE("/pls/apex/cvasq/svra/Proveedor/")
+	@DELETE("/pls/apex/cvasq/svra/Proveedores/")
 	Call<ResponseBody> eliminarProveedor(@Query("proveedorid") String proveedorid);
 
 	//Ordenes
