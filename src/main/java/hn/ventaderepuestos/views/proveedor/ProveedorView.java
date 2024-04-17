@@ -269,7 +269,7 @@ public class ProveedorView extends Div implements BeforeEnterObserver, ViewModel
         	nombre.setValue(value.getNombre());
         	direccion.setValue(value.getDireccion());
         	correo.setValue(value.getCorreo());
-        	telefono.setValue(value.getCorreo());
+        	telefono.setValue(value.getTelefono());
         	pais.setValue(value.getPais());
         	
         }else {

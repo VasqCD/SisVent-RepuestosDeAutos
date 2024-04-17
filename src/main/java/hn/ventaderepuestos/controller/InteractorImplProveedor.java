@@ -16,7 +16,7 @@ public class InteractorImplProveedor implements InteractorProveedor {
 		super();
 		this.vista = view;
 		this.modelo = DatabaseRepositoryImpl.getInstance("https://apex.oracle.com", 30000L);
-		//https://apex.oracle.com/pls/apex/cvasq/svra/Proveedor
+		//https://apex.oracle.com/pls/apex/cvasq/svra/Proveedores
 		
 	}
 	
@@ -63,9 +63,9 @@ public class InteractorImplProveedor implements InteractorProveedor {
 	}
 
 	@Override
-	public void eliminarProveedor(String codigoid) {
+	public void eliminarProveedor(String proveedorid) {
 		try {
-			boolean eliminado = this.modelo.eliminarProveedor(Integer.parseInt(codigoid));
+			boolean eliminado = this.modelo.eliminarProveedor(Integer.parseInt(proveedorid));
 			if(eliminado == true) {
 				this.vista.mostrarMensajeExito("Proveedor eliminado exitosamente");
 			}else {
