@@ -49,14 +49,14 @@ public class RepuestoTest {
         campoEstado.sendKeys("Activo");
         Thread.sleep(3000);
         btnGuardar.click();
-        // Aquí puedes agregar aserciones o verificaciones adicionales según sea necesario
+      
     }
 
 
     @Test
     void testMostrarMensajeError() {
         repuestosView.mostrarMensajeError("Este es un mensaje de error");
-        // Aquí puedes agregar aserciones o verificaciones adicionales según sea necesario
+    
     }
     
     @Test
