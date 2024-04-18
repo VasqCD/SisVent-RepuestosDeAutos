@@ -69,33 +69,13 @@ public interface DatabaseRepository {
 
 	//Ordenes
 	//https://apex.oracle.com/pls/apex/cvasq/svra/Ordenes
+
+	//galeria repuestos
+
 	@Headers({
 			"Accept: application/json",
 			"User-Agent: Retrofit-Sample-App"
 	})
-	@GET("/pls/apex/cvasq/svra/Ordenes")
-	Call<OrdenesResponse> consultarOrden();
-
-	@Headers({
-		"Accept: application/json",
-		"User-Agent: Retrofit-Sample-App"
-	})
-	@POST("/pls/apex/cvasq/svra/Ordenes")
-	Call<ResponseBody> crearOrden(@Body Orden nuevo);
-
-	@Headers({
-		"Accept: application/json",
-		"User-Agent: Retrofit-Sample-App"
-	})
-	@PUT("/pls/apex/cvasq/svra/Ordenes")
-	Call<ResponseBody> actualizarOrden(@Body Orden cambiar);
-
-	@Headers({
-		"Accept: application/json",
-		"User-Agent: Retrofit-Sample-App"
-	})
-	@DELETE("/pls/apex/cvasq/svra/Ordenes/")
-	Call<ResponseBody> eliminarOrden(@Query("ordenid") int ordenid);
-
-
+	@GET("/pls/apex/cvasq/svra/Repuestos")
+	Call<GaleriaRepuestoResponse> consultarGaleriaRepuesto();
 }

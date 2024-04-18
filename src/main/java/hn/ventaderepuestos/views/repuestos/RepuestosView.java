@@ -8,6 +8,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -15,6 +16,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.function.SerializableBiConsumer;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
@@ -87,7 +90,8 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
         grid.addColumn("precio").setAutoWidth(true);
         grid.addColumn("stock").setAutoWidth(true);
         grid.addColumn("nombre_proveedor").setAutoWidth(true).setHeader("Proveedor");
-        grid.addColumn("estado").setAutoWidth(true);
+        grid.addColumn(estiloEstado()).setHeader("Estado").setAutoWidth(true);
+        //grid.addColumn("estado").setAutoWidth(true);
 
         
 
@@ -129,8 +133,10 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
                     this.repuestoSeleccionado.setNombre(nombre.getValue());
                     this.repuestoSeleccionado.setMarca(marca.getValue());
                     this.repuestoSeleccionado.setPrecio(precio.getValue());
-                    this.repuestoSeleccionado.setStock(stock.getValue().intValue());
-                    this.repuestoSeleccionado.setEstado(estado.getValue());
+                    int stockValue = stock.getValue().intValue();
+                    this.repuestoSeleccionado.setStock(stockValue);
+                    // ESTADO EN BASE AL STOCK
+                    this.repuestoSeleccionado.setEstado(stockValue > 0 ? "Activo" : "Inactivo");
                     this.repuestoSeleccionado.setProveedor(String.valueOf(proveedor.getValue().getProveedorid()));
                     
                     this.controlador.crearRepuesto(repuestoSeleccionado);
@@ -142,7 +148,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
                     this.repuestoSeleccionado.setPrecio(precio.getValue());
                     int stockValue = stock.getValue().intValue();
                     this.repuestoSeleccionado.setStock(stockValue);
-                    // Set estado based on stock value
+                    // ESTADO EN BASE AL STOCK
                     this.repuestoSeleccionado.setEstado(stockValue > 0 ? "Activo" : "Inactivo");
                     this.repuestoSeleccionado.setProveedor(String.valueOf(proveedor.getValue().getProveedorid()));
 
@@ -172,6 +178,19 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
                 UI.getCurrent().navigate(RepuestosView.class);
             }
         });
+    }
+
+    private static final SerializableBiConsumer<Span, Repuesto> statusComponentUpdater = (
+            span, repuesto) -> {
+        boolean estadoActivo = "Activo".equals(repuesto.getEstado());
+        String theme = String.format("badge %s",
+                estadoActivo ? "success" : "error");
+        span.getElement().setAttribute("theme", theme);
+        span.setText(repuesto.getEstado());
+    };
+
+    private static ComponentRenderer<Span, Repuesto> estiloEstado() {
+        return new ComponentRenderer<>(Span::new, statusComponentUpdater);
     }
 
     //SE EJECUTA AL SELECCIONAR UN ELEMENTO DEL GRID

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
-@PageTitle("Proveedor")
+@PageTitle("Proveedores")
 @Route(value = "proveedor/:proveedorid?/:action?(edit)", layout = MainLayout.class)
 //@RouteAlias(value = "", layout = MainLayout.class)
 @Uses(Icon.class)
