@@ -1,4 +1,5 @@
 @import url('./main-layout.css');
+@import url('./views/galeria-repuestos-view.css');
 @import url('./views/repuestos-view.css');
 @import url('./views/proveedor-view.css');
 @import url('./views/categorias-view.css');    html {

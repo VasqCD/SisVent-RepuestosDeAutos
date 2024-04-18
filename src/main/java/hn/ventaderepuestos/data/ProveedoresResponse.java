@@ -6,6 +6,7 @@ public class ProveedoresResponse {
 	
 	private List<Proveedor> items;
 	private int count;
+
 	public List<Proveedor> getItems() {
 		return items;
 	}

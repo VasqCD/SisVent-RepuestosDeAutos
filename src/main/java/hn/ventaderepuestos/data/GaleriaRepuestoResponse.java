@@ -2,21 +2,24 @@ package hn.ventaderepuestos.data;
 
 import java.util.List;
 
-public class OrdenesResponse {
+public class GaleriaRepuestoResponse {
 
-    private List<Orden> items;
+    private List<GaleriaRepuesto> items;
     private int count;
-    public List<Orden> getItems() {
+
+    public List<GaleriaRepuesto> getItems() {
         return items;
     }
-    public void setItems(List<Orden> items) {
+
+    public void setItems(List<GaleriaRepuesto> items) {
         this.items = items;
     }
+
     public int getCount() {
         return count;
     }
+
     public void setCount(int count) {
         this.count = count;
     }
-
 }
