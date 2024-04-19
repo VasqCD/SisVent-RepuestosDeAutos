@@ -9,7 +9,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 
 public class GaleriaRepuestosViewCard extends ListItem {
 
-    public GaleriaRepuestosViewCard(String nombre, String text, String url) {
+    public GaleriaRepuestosViewCard(String nombre, int codigo, String url) {
         addClassNames(LumoUtility.Background.CONTRAST_5, LumoUtility.Display.FLEX, LumoUtility.FlexDirection.COLUMN, LumoUtility.AlignItems.START, LumoUtility.Padding.MEDIUM,
                 LumoUtility.BorderRadius.LARGE);
 
@@ -21,7 +21,7 @@ public class GaleriaRepuestosViewCard extends ListItem {
         Image image = new Image();
         image.setWidth("100%");
         image.setSrc(url);
-        image.setAlt(text);
+        image.setAlt(String.valueOf(codigo));
 
         fotografia.add(image);
 
@@ -31,16 +31,15 @@ public class GaleriaRepuestosViewCard extends ListItem {
 
         Span repuestoid = new Span();
         repuestoid.addClassNames(LumoUtility.FontSize.SMALL, LumoUtility.TextColor.SECONDARY);
-        repuestoid.setText("Card subtitle");
+        repuestoid.setText("Codigo: " + String.valueOf(codigo));
 
-        Paragraph description = new Paragraph(
-                "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut.");
-        description.addClassName(LumoUtility.Margin.Vertical.MEDIUM);
+        Paragraph marcaRepuesto = new Paragraph("Marca: ");
+        marcaRepuesto.addClassName(LumoUtility.Margin.Vertical.MEDIUM);
 
-        Span badge = new Span();
-        badge.getElement().setAttribute("theme", "badge");
-        badge.setText("Label");
+        Span estado = new Span();
+        estado.getElement().setAttribute("theme", "badge");
+        estado.setText("Label");
 
-        add(fotografia, nombreRepuesto, repuestoid, description, badge);
+        add(fotografia, nombreRepuesto, repuestoid, marcaRepuesto, estado);
     }
 }

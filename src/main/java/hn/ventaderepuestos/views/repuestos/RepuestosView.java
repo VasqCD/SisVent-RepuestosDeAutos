@@ -1,5 +1,6 @@
 package hn.ventaderepuestos.views.repuestos;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -7,8 +8,14 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
+import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
+import com.vaadin.flow.component.grid.contextmenu.GridSubMenu;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -28,12 +35,12 @@ import hn.ventaderepuestos.controller.InteractorImplRepuesto;
 import hn.ventaderepuestos.controller.InteractorRepuesto;
 import hn.ventaderepuestos.data.Proveedor;
 import hn.ventaderepuestos.data.Repuesto;
+import hn.ventaderepuestos.data.RepuestosReport;
+import hn.ventaderepuestos.services.ReportGenerator;
 import hn.ventaderepuestos.views.MainLayout;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @PageTitle("Repuestos")
@@ -94,6 +101,18 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
         
 
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
+
+        GridContextMenu<Repuesto> menu = grid.addContextMenu();
+
+        GridMenuItem<Repuesto> assign = menu.addItem("Exportar");
+        assign.addComponentAsFirst(createIcon(VaadinIcon.FILE_TABLE));
+
+        GridSubMenu<Repuesto> exportSubMenu = assign.getSubMenu();
+        exportSubMenu.addItem("Documento PDF", event -> {
+            Notification.show("Generando reporte en PDF");
+            generarReporte();
+        });
+
 
         // when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> {
@@ -178,6 +197,29 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
         });
     }
 
+    private void generarReporte() {
+        ReportGenerator generador = new ReportGenerator();
+        RepuestosReport datasource = new RepuestosReport();
+        datasource.setRepuestos(elementos);
+        Map<String, Object> parameters = new HashMap<>();
+
+        boolean generado = generador.generarReportePdf("reporte_repuestos", parameters, datasource);
+        if(generado) {
+            String ubicacion = generador.getReportPath();
+            Anchor url = new Anchor(ubicacion, "Abrir Reporte");
+            url.setTarget("_blank");
+
+            Notification notification = new Notification(url);
+            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            notification.setPosition(Position.MIDDLE);
+            notification.setDuration(15000);
+            notification.open();
+        }else {
+            //OCURRIO UN ERROR
+            mostrarMensajeError("Ocurrió un problema al generar el reporte");
+        }
+    }
+
     private static final SerializableBiConsumer<Span, Repuesto> statusComponentUpdater = (
             span, repuesto) -> {
         boolean estadoActivo = "Activo".equals(repuesto.getEstado());
@@ -191,6 +233,13 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
         return new ComponentRenderer<>(Span::new, statusComponentUpdater);
     }
 
+    private Component createIcon(VaadinIcon vaadinIcon) {
+        Icon icon = vaadinIcon.create();
+        icon.getStyle().set("color", "var(--lumo-secondary-text-color)")
+                .set("margin-inline-end", "var(--lumo-space-s")
+                .set("padding", "var(--lumo-space-xs");
+        return icon;
+    }
     //SE EJECUTA AL SELECCIONAR UN ELEMENTO DEL GRID
     @Override
 public void beforeEnter(BeforeEnterEvent event) {

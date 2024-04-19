@@ -8,6 +8,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ProveedorTest {
@@ -16,8 +18,9 @@ public class ProveedorTest {
 	public void testGuardarRepuesto() throws InterruptedException {
 		
 		// Inicializa el WebDriver para Chrome
-		WebDriver driver = new ChromeDriver();
+		//WebDriver driver = new ChromeDriver();
 		//WebDriver driver = new FirefoxDriver();
+		WebDriver driver = new EdgeDriver();
 		
 		try {
 			
@@ -36,7 +39,7 @@ public class ProveedorTest {
 			WebElement cCorreo = driver.findElement(By.xpath("//vaadin-text-field[@id='txt_correo']/input"));
 			WebElement cTelefono = driver.findElement(By.xpath("//vaadin-text-field[@id='txt_telefono']/input"));
 			WebElement cPais = driver.findElement(By.xpath("//vaadin-text-field[@id='txt_pais']"));
-			WebElement cEstado = driver.findElement(By.xpath("//vaadin-text-field[@id='txt_estado']/input"));
+
 			
 			WebElement btnGuardar = driver.findElement(By.xpath("//vaadin-button[@id='btn_gurdar']"));
 			
@@ -46,7 +49,6 @@ public class ProveedorTest {
 			cCorreo.sendKeys("contacto@srepuesto.com");
 			cTelefono.sendKeys("8888-8989");
 			cPais.sendKeys("Honduras");
-			cEstado.sendKeys("Activo");
 			
 			
 			

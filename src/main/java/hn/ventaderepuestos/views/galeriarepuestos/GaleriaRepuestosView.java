@@ -46,7 +46,7 @@ public class GaleriaRepuestosView extends Main implements HasComponents, HasStyl
     private GaleriaRepuesto repuestoSeleccionado;
     private List<GaleriaRepuesto> repuestos;
     private InteractorGaleriaRepuesto controlador;
-    private TextField nombre;
+
 
     public GaleriaRepuestosView() {
 
@@ -58,7 +58,9 @@ public class GaleriaRepuestosView extends Main implements HasComponents, HasStyl
         constructUI();
 
         for (GaleriaRepuesto repuesto : repuestos) {
-            imageContainer.add(new GaleriaRepuestosViewCard(repuesto.getNombre(), "Snow mountains under stars",
+
+
+            imageContainer.add(new GaleriaRepuestosViewCard(repuesto.getNombre(), repuesto.getRepuestoid(),
                     "https://images.unsplash.com/photo-1519681393784-d120267933ba?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"));
         }
     }
@@ -71,31 +73,22 @@ public class GaleriaRepuestosView extends Main implements HasComponents, HasStyl
         container.addClassNames(AlignItems.CENTER, JustifyContent.BETWEEN);
 
         VerticalLayout headerContainer = new VerticalLayout();
-        H2 header = new H2("Beautiful photos");
+        H2 header = new H2("Galeria de repuestos");
         header.addClassNames(Margin.Bottom.NONE, Margin.Top.XLARGE, FontSize.XXXLARGE);
-        Paragraph description = new Paragraph("Royalty free photos and pictures, courtesy of Unsplash");
+        Paragraph description = new Paragraph("Galeria de repuestos disponibles en la tienda");
         description.addClassNames(Margin.Bottom.XLARGE, Margin.Top.NONE, TextColor.SECONDARY);
         headerContainer.add(header, description);
 
-        Select<String> sortBy = new Select<>();
-        sortBy.setLabel("Sort by");
-        sortBy.setItems("Popularity", "Newest first", "Oldest first");
-        sortBy.setValue("Popularity");
+
 
         imageContainer = new OrderedList();
         imageContainer.addClassNames(Gap.MEDIUM, Display.GRID, ListStyleType.NONE, Margin.NONE, Padding.NONE);
 
-        container.add(headerContainer, sortBy);
+        container.add(headerContainer);
         add(container, imageContainer);
     }
 
-//    @Override
-//    public void mostrarGaleriaRepuesto(List<GaleriaRepuesto> items) {
-//        imageContainer.removeAll();
-//        for(GaleriaRepuesto item: items) {
-//            imageContainer.add(new GaleriaRepuestosViewCard(item.getNombre(), item.getNombre(), item.getUrl()));
-//        }
-//    }
+
     @Override
     public void mostrarGaleriaRepuesto(List<GaleriaRepuesto> items){
         Collection<GaleriaRepuesto> itemsCollection = items;
@@ -109,14 +102,4 @@ public class GaleriaRepuestosView extends Main implements HasComponents, HasStyl
         n.addThemeVariants(NotificationVariant.LUMO_ERROR);
     }
 
-    private GaleriaRepuesto mostrarGaleriaRepuesto (int repuestoid) {
-        GaleriaRepuesto encontrado = null;
-        for(GaleriaRepuesto rep: repuestos) {
-            if(rep.getRepuestoid() == repuestoid) {
-                encontrado = rep;
-                break;
-            }
-        }
-        return encontrado;
-    }
 }
