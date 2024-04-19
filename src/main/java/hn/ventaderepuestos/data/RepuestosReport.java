@@ -10,7 +10,7 @@ public class RepuestosReport implements JRDataSource {
 
     private List<Repuesto> repuestos;
     private int counter = -1;
-    private int maxCountrer = 0;
+    private int maxCounter = 0;
 
     public List<Repuesto> getRepuestos() {
         return repuestos;
@@ -18,7 +18,7 @@ public class RepuestosReport implements JRDataSource {
 
     public void setRepuestos(List<Repuesto> repuestos) {
         this.repuestos = repuestos;
-        this.maxCountrer = this.repuestos.size()-1;
+        this.maxCounter = this.repuestos.size()-1;
     }
 
     public int getCounter() {
@@ -30,16 +30,16 @@ public class RepuestosReport implements JRDataSource {
     }
 
     public int getMaxCountrer() {
-        return maxCountrer;
+        return maxCounter;
     }
 
     public void setMaxCountrer(int maxCountrer) {
-        this.maxCountrer = maxCountrer;
+        this.maxCounter = maxCountrer;
     }
 
     @Override
     public boolean next() throws JRException {
-        if(counter < maxCountrer){
+        if(counter < maxCounter){
             counter++;
             return true; //hay mas datos aun
         }

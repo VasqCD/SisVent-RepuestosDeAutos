@@ -6,6 +6,7 @@ public class GaleriaRepuesto {
     private String nombre;
     private String marca;
     private String imagen;
+    private String estado;
 
     public int getRepuestoid() {
         return repuestoid;
@@ -38,4 +39,14 @@ public class GaleriaRepuesto {
     public void setImagen(String imagen) {
         this.imagen = imagen;
     }
+
+	public String getEstado() {
+		return estado;
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+    
+    
 }

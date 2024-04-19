@@ -26,9 +26,9 @@
 	</queryString>
 	<field name="REPUESTOID" class="java.lang.String"/>
 	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="MARCA" class="java.lang.String"/>
 	<field name="NOMBRE_PROVEEDOR" class="java.lang.String"/>
 	<field name="ESTADO" class="java.lang.String"/>
-	<field name="MARCA" class="java.lang.String"/>
 	<title>
 		<band height="145" splitType="Stretch">
 			<staticText>
@@ -58,7 +58,7 @@
 	<columnHeader>
 		<band height="31">
 			<staticText>
-				<reportElement x="10" y="0" width="70" height="30" uuid="e2312f9a-0fd1-4c6f-bf95-41347e379647"/>
+				<reportElement mode="Transparent" x="10" y="0" width="70" height="30" uuid="e2312f9a-0fd1-4c6f-bf95-41347e379647"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
@@ -92,6 +92,12 @@
 				</textElement>
 				<text><![CDATA[Estado actual]]></text>
 			</staticText>
+			<line>
+				<reportElement x="10" y="20" width="740" height="1" uuid="200986cd-a288-45a0-be20-3feef7b0befb"/>
+			</line>
+			<line>
+				<reportElement x="10" y="-2" width="740" height="1" uuid="06413173-6913-4e92-85d1-a7f2a5afaea0"/>
+			</line>
 		</band>
 	</columnHeader>
 	<detail>

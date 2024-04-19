@@ -103,7 +103,6 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
         GridContextMenu<Repuesto> menu = grid.addContextMenu();
-
         GridMenuItem<Repuesto> assign = menu.addItem("Exportar");
         assign.addComponentAsFirst(createIcon(VaadinIcon.FILE_TABLE));
 
@@ -150,23 +149,23 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
                     this.repuestoSeleccionado.setNombre(nombre.getValue());
                     this.repuestoSeleccionado.setMarca(marca.getValue());
                     this.repuestoSeleccionado.setPrecio(precio.getValue());
-                    int stockValue = stock.getValue().intValue();
-                    this.repuestoSeleccionado.setStock(stockValue);
+                    
+                    int valorStock = stock.getValue().intValue();
+                    this.repuestoSeleccionado.setStock(valorStock);
                     // ESTADO EN BASE AL STOCK
-                    this.repuestoSeleccionado.setEstado(stockValue > 0 ? "Activo" : "Inactivo");
+                    this.repuestoSeleccionado.setEstado(valorStock > 0 ? "Activo" : "Inactivo");
                     this.repuestoSeleccionado.setProveedor(String.valueOf(proveedor.getValue().getProveedorid()));
                     
                     this.controlador.crearRepuesto(repuestoSeleccionado);
                 }else {
                 	//actualizacion
-                    //this.repuestoSeleccionado.setRepuestoid(Integer.parseInt(repuestoid.getValue()));
                     this.repuestoSeleccionado.setNombre(nombre.getValue());
                     this.repuestoSeleccionado.setMarca(marca.getValue());
                     this.repuestoSeleccionado.setPrecio(precio.getValue());
-                    int stockValue = stock.getValue().intValue();
-                    this.repuestoSeleccionado.setStock(stockValue);
+                    int valorStock = stock.getValue().intValue();
+                    this.repuestoSeleccionado.setStock(valorStock);
                     // ESTADO EN BASE AL STOCK
-                    this.repuestoSeleccionado.setEstado(stockValue > 0 ? "Activo" : "Inactivo");
+                    this.repuestoSeleccionado.setEstado(valorStock > 0 ? "Activo" : "Inactivo");
                     this.repuestoSeleccionado.setProveedor(String.valueOf(proveedor.getValue().getProveedorid()));
 
                     this.controlador.actualizarRepuesto(repuestoSeleccionado);
@@ -178,7 +177,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
                 UI.getCurrent().navigate(RepuestosView.class);
             } catch (ObjectOptimisticLockingFailureException exception) {
                 Notification n = Notification.show(
-                        "Error updating the data. Somebody else has updated the record while you were making changes.");
+                        "Hubo un error al actualizar los datos");
                 n.setPosition(Position.MIDDLE);
                 n.addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
@@ -203,7 +202,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
         datasource.setRepuestos(elementos);
         Map<String, Object> parameters = new HashMap<>();
 
-        boolean generado = generador.generarReportePdf("reporte_repuestos", parameters, datasource);
+        boolean generado = generador.generarReportePDF("reporte_repuestos", parameters, datasource);
         if(generado) {
             String ubicacion = generador.getReportPath();
             Anchor url = new Anchor(ubicacion, "Abrir Reporte");
@@ -220,6 +219,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
         }
     }
 
+    //aplicando estilo a estado Inactivo o Activo
     private static final SerializableBiConsumer<Span, Repuesto> statusComponentUpdater = (
             span, repuesto) -> {
         boolean estadoActivo = "Activo".equals(repuesto.getEstado());
@@ -233,6 +233,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
         return new ComponentRenderer<>(Span::new, statusComponentUpdater);
     }
 
+ 
     private Component createIcon(VaadinIcon vaadinIcon) {
         Icon icon = vaadinIcon.create();
         icon.getStyle().set("color", "var(--lumo-secondary-text-color)")
@@ -240,6 +241,7 @@ public class RepuestosView extends Div implements BeforeEnterObserver, ViewModel
                 .set("padding", "var(--lumo-space-xs");
         return icon;
     }
+    
     //SE EJECUTA AL SELECCIONAR UN ELEMENTO DEL GRID
     @Override
 public void beforeEnter(BeforeEnterEvent event) {
@@ -281,7 +283,7 @@ public void beforeEnter(BeforeEnterEvent event) {
         repuestoid = new TextField("Codigo de repuesto");
         repuestoid.setId("txt_codigoRepuesto");
         repuestoid.setValue("0");
-        repuestoid.setEnabled(false);
+        repuestoid.setEnabled(false); //desabilitar edicion del boton codigo de repuesto
 
         nombre = new TextField("Nombre de repuesto");
         nombre.setId("txt_nombreRepuesto");
