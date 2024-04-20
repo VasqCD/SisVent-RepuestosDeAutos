@@ -61,6 +61,6 @@ public class RepuestoTest {
     // TestMostrarMensajeError
     @Test
     void testMostrarMensajeError() {
-        // Simular el método mostrarMensajeError en la vista y verificar que se muestre correctamente el mensaje de error
+        // Verificar que se muestre correctamente el mensaje de error
     }
 }
