@@ -48,9 +48,7 @@ public class RepuestosReport implements JRDataSource {
 
     @Override
     public Object getFieldValue(JRField jrField) throws JRException {
-        if ("REPUESTOID".equals(jrField.getName())) {
-            return repuestos.get(counter).getRepuestoid();
-        } else if ("NOMBRE".equals(jrField.getName())) {
+        if ("NOMBRE".equals(jrField.getName())) {
             return repuestos.get(counter).getNombre();
         } else if ("MARCA".equals(jrField.getName())) {
             return repuestos.get(counter).getMarca();
